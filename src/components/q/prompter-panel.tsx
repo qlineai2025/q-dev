@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from 'react';
-import { Maximize, Minimize, Contrast, FlipVertical, FlipHorizontal, Rewind, ScreenShare } from 'lucide-react';
+import { Maximize, Minimize, Contrast, FlipVertical, FlipHorizontal, Rewind } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { cn } from '@/lib/utils';
 import {
@@ -10,10 +10,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { Slider } from '../ui/slider';
 import { useToast } from '@/hooks/use-toast';
 import { IconButton } from '../ui/button';
-import { AssistWindow } from './assist-window';
 import PrompterView from './prompter-view';
 
 
@@ -21,7 +19,6 @@ export default function PrompterPanel() {
   const { 
     isPlaying, 
     setIsPlaying, 
-    activeLine,
     setActiveLine,
     isPrompterFullscreen,
     setIsPrompterFullscreen,
@@ -29,8 +26,6 @@ export default function PrompterPanel() {
     setIsFlippedVertical,
     isFlippedHorizontal,
     setIsFlippedHorizontal,
-    isAssistModeOn,
-    setIsAssistModeOn,
   } = useApp();
 
   const [isBrightnessPopoverOpen, setIsBrightnessPopoverOpen] = useState(false);
@@ -51,10 +46,6 @@ export default function PrompterPanel() {
       description: "Returned to the beginning of the script.",
     });
   };
-
-  const handleAssistModeToggle = () => {
-    setIsAssistModeOn(!isAssistModeOn);
-  };
   
   const prompterContent = <PrompterView onPanelClick={handlePanelClick} />;
 
@@ -66,12 +57,6 @@ export default function PrompterPanel() {
       )}
     >
       {prompterContent}
-      
-       {isAssistModeOn && (
-        <AssistWindow onClose={() => setIsAssistModeOn(false)}>
-            <PrompterView isAssistMode={true} />
-        </AssistWindow>
-      )}
       
       <div className="absolute bottom-4 right-4 flex flex-col gap-2">
         <IconButton
@@ -124,16 +109,6 @@ export default function PrompterPanel() {
           className="text-primary/70 hover:text-primary"
         >
           <FlipVertical className="h-5 w-5" />
-        </IconButton>
-        <IconButton
-          tooltip="Assist Mode"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleAssistModeToggle();
-          }}
-          className={cn("text-primary/70 hover:text-primary", isAssistModeOn && 'bg-accent text-accent-foreground')}
-        >
-          <ScreenShare className="h-5 w-5" />
         </IconButton>
         <IconButton
           tooltip={isPrompterFullscreen ? "Exit Fullscreen" : "Fullscreen"}

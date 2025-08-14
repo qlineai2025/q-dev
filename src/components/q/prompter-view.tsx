@@ -1,19 +1,19 @@
 
 "use client";
 
-import type { ComponentProps } from 'react';
 import { useEffect, useRef } from 'react';
 import { useApp } from '@/hooks/use-app';
 import { cn } from '@/lib/utils';
+import { Textarea } from '@/components/ui/textarea';
 
 interface PrompterViewProps {
   onPanelClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
-  isAssistMode?: boolean;
 }
 
-export default function PrompterView({ onPanelClick, isAssistMode = false }: PrompterViewProps) {
+export default function PrompterView({ onPanelClick }: PrompterViewProps) {
   const { 
-    script, 
+    script,
+    setScript,
     fontSize, 
     horizontalMargin, 
     verticalMargin,
@@ -56,7 +56,7 @@ export default function PrompterView({ onPanelClick, isAssistMode = false }: Pro
     }
   }, [activeLine]);
 
-  const prompterTextColor = isAssistMode || isPrompterDarkMode ? 'text-white/90' : 'text-primary';
+  const prompterTextColor = isPrompterDarkMode ? 'text-white/90' : 'text-primary';
 
   return (
       <div
@@ -65,8 +65,8 @@ export default function PrompterView({ onPanelClick, isAssistMode = false }: Pro
         onClick={onPanelClick}
         className={cn(
           "h-full w-full overflow-y-scroll scroll-smooth text-center",
-           isAssistMode ? "bg-black" : "rounded-md border",
-          !isAssistMode && (isPrompterDarkMode ? 'bg-black' : 'bg-background')
+          isPrompterDarkMode ? 'bg-black' : 'bg-background',
+          "rounded-md border"
         )}
         style={{
           paddingLeft: `${horizontalMargin}%`,
