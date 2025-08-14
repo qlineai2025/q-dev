@@ -152,34 +152,12 @@ export default function ControlsPanel() {
         </div>
 
         <div className="my-2 flex items-center justify-center">
-            <Button
-                variant={isListening ? "destructive" : "default"}
-                onClick={handleListenToggle}
-                className="rounded-r-none bg-primary/90 hover:bg-primary/80"
-            >
-                {isListening ? (
-                    <MicOff className="h-5 w-5" />
-                ) : (
-                    <Mic className="h-5 w-5" />
-                )}
-            </Button>
-            <Button
-              onClick={() => setIsPlaying(!isPlaying)}
-              variant="default"
-              className="flex-1 justify-center rounded-none bg-primary/90 hover:bg-primary/80"
-            >
-              {isPlaying ? (
-                <Pause className="h-5 w-5" />
-              ) : (
-                <Play className="h-5 w-5" />
-              )}
-            </Button>
-             <Popover open={isAudioSettingsOpen} onOpenChange={setIsAudioSettingsOpen}>
+            <Popover open={isAudioSettingsOpen} onOpenChange={setIsAudioSettingsOpen}>
                 <PopoverTrigger asChild>
                     <Button 
                         variant="default" 
                         size="icon" 
-                        className="rounded-l-none bg-primary/90 hover:bg-primary/80"
+                        className="rounded-r-none bg-primary/90 hover:bg-primary/80"
                         onClick={handleAudioSettingsClick}
                     >
                         <Settings2 className="h-5 w-5" />
@@ -209,6 +187,28 @@ export default function ControlsPanel() {
                     </div>
                 </PopoverContent>
             </Popover>
+            <Button
+              onClick={() => setIsPlaying(!isPlaying)}
+              variant="default"
+              className="flex-1 justify-center rounded-none bg-primary/90 hover:bg-primary/80"
+            >
+              {isPlaying ? (
+                <Pause className="h-5 w-5" />
+              ) : (
+                <Play className="h-5 w-5" />
+              )}
+            </Button>
+            <Button
+                variant={isListening ? "destructive" : "default"}
+                onClick={handleListenToggle}
+                className="rounded-l-none bg-primary/90 hover:bg-primary/80"
+            >
+                {isListening ? (
+                    <MicOff className="h-5 w-5" />
+                ) : (
+                    <Mic className="h-5 w-5" />
+                )}
+            </Button>
         </div>
         <div className="flex flex-1 items-center justify-center gap-4 px-2 pt-4">
           <ControlSlider
