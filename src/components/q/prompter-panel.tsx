@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useRef } from 'react';
-import { Maximize, Minimize, Sun, Moon } from 'lucide-react';
+import { Maximize, Minimize, Contrast } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { cn } from '@/lib/utils';
 import IconButton from './icon-button';
@@ -117,7 +117,7 @@ export default function PrompterPanel() {
           }
           className={cn(isPrompterDarkMode && 'text-white bg-gray-800 hover:bg-gray-700 hover:text-white')}
         >
-          {isPrompterDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          <Contrast className="h-5 w-5" />
         </IconButton>
         <IconButton
           tooltip={isPrompterFullscreen ? "Exit Fullscreen" : "Fullscreen"}
