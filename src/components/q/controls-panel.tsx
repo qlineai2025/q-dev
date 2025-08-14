@@ -1,6 +1,7 @@
 
 "use client";
 
+import type { ComponentProps, ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import {
   Type,
@@ -16,7 +17,6 @@ import {
 } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { Slider } from '@/components/ui/slider';
-import { IconButton } from '@/components/q/icon-button';
 import AuthButton from '@/components/q/auth-button';
 import { useVoiceControl } from '@/hooks/use-voice-control';
 import { useToast } from '@/hooks/use-toast';
@@ -41,6 +41,39 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
+
+interface IconButtonProps extends ComponentProps<typeof Button> {
+  tooltip: string;
+  children: ReactNode;
+}
+
+function IconButton({
+  tooltip,
+  children,
+  className,
+  ...props
+}: IconButtonProps) {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn('h-9 w-9 text-muted-foreground hover:text-foreground', className)}
+            {...props}
+          >
+            {children}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{tooltip}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+
 
 export default function ControlsPanel() {
   const {
@@ -279,21 +312,21 @@ function ControlSlider({ label, icon, value, orientation = "horizontal", ...prop
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-              <div className={cn(
-                "flex items-center gap-2 text-sm font-medium text-muted-foreground",
-                orientation === 'vertical' ? 'flex-col h-full' : ''
-              )}>
-                {icon}
-                <Slider 
-                  defaultValue={[value]} 
-                  value={[value]}
-                  orientation={orientation}
-                  className={cn(
-                    orientation === 'vertical' ? 'w-2 flex-1' : 'flex-1'
-                  )}
-                  {...props} 
-                />
-              </div>
+            <div className={cn(
+              "flex items-center gap-2 text-sm font-medium text-muted-foreground",
+              orientation === 'vertical' ? 'flex-col-reverse h-full' : ''
+            )}>
+              <Slider 
+                defaultValue={[value]} 
+                value={[value]}
+                orientation={orientation}
+                className={cn(
+                  orientation === 'vertical' ? 'w-2 flex-1' : 'flex-1'
+                )}
+                {...props} 
+              />
+              {icon}
+            </div>
           </TooltipTrigger>
           <TooltipContent side={orientation === 'vertical' ? 'right' : 'bottom'}>
             <p>{label}: {value}</p>
@@ -303,5 +336,3 @@ function ControlSlider({ label, icon, value, orientation = "horizontal", ...prop
     </div>
   );
 }
-
-    

@@ -1,12 +1,48 @@
 
 "use client";
 
+import type { ComponentProps, ReactNode } from 'react';
 import { Bot, Loader2, ChevronsUpDown } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
 import { intelligentScriptIndexing } from '@/ai/flows/intelligent-script-indexing';
 import { useToast } from '@/hooks/use-toast';
-import { IconButton } from '@/components/q/icon-button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import { cn } from '@/lib/utils';
+
+interface IconButtonProps extends ComponentProps<typeof Button> {
+  tooltip: string;
+  children: ReactNode;
+}
+
+function IconButton({
+  tooltip,
+  children,
+  className,
+  ...props
+}: IconButtonProps) {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn('h-9 w-9 text-muted-foreground hover:text-foreground', className)}
+            {...props}
+          >
+            {children}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{tooltip}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+
 
 export default function ScriptEditorPanel() {
   const { script, setScript, setIndexedScript, isLoadingIndex, setIsLoadingIndex, isScriptEditorExpanded, setIsScriptEditorExpanded } = useApp();
