@@ -49,6 +49,8 @@ interface AppContextType {
   setIsPrompterDarkMode: (darkMode: boolean) => void;
   isPrompterFullscreen: boolean;
   setIsPrompterFullscreen: (fullscreen: boolean) => void;
+  prompterTextBrightness: number;
+  setPrompterTextBrightness: (brightness: number) => void;
 }
 
 export const AppContext = createContext<AppContextType | null>(null);
@@ -67,8 +69,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [isLoadingIndex, setIsLoadingIndex] = useState<boolean>(false);
   const [activeLine, setActiveLine] = useState<number | null>(null);
   const [isScriptEditorExpanded, setIsScriptEditorExpanded] = useState<boolean>(false);
-  const [isPrompterDarkMode, setIsPrompterDarkMode] = useState<boolean>(false);
+  const [isPrompterDarkMode, setIsPrompterDarkMode] = useState<boolean>(true);
   const [isPrompterFullscreen, setIsPrompterFullscreen] = useState<boolean>(false);
+  const [prompterTextBrightness, setPrompterTextBrightness] = useState<number>(100);
 
   const contextValue = useMemo(
     () => ({
@@ -100,6 +103,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setIsPrompterDarkMode,
       isPrompterFullscreen,
       setIsPrompterFullscreen,
+      prompterTextBrightness,
+      setPrompterTextBrightness,
     }),
     [
       script,
@@ -116,6 +121,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       isScriptEditorExpanded,
       isPrompterDarkMode,
       isPrompterFullscreen,
+      prompterTextBrightness,
     ]
   );
 

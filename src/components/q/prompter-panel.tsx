@@ -6,6 +6,14 @@ import { Maximize, Minimize, Contrast } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { cn } from '@/lib/utils';
 import IconButton from './icon-button';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { Slider } from '../ui/slider';
+import { Label } from '../ui/label';
+import { Button } from '@/components/ui/button';
 
 export default function PrompterPanel() {
   const { 
@@ -20,7 +28,9 @@ export default function PrompterPanel() {
     isPrompterDarkMode,
     setIsPrompterDarkMode,
     isPrompterFullscreen,
-    setIsPrompterFullscreen
+    setIsPrompterFullscreen,
+    prompterTextBrightness,
+    setPrompterTextBrightness,
   } = useApp();
   const prompterRef = useRef<HTMLDivElement>(null);
   const lineRefs = useRef<(HTMLParagraphElement | null)[]>([]);
@@ -92,14 +102,14 @@ export default function PrompterPanel() {
                 ref={(el) => (lineRefs.current[index] = el)}
                 className={cn(
                     'transition-colors duration-300',
-                    isPrompterDarkMode
-                      ? (activeLine === index + 1 ? 'text-accent' : 'text-white')
-                      : (activeLine === index + 1 ? 'text-accent' : 'text-primary')
+                     isPrompterDarkMode ? 'text-white' : 'text-primary'
                 )}
                 style={{
                     fontSize: `${fontSize}px`,
                     lineHeight: 1.5,
                     marginBottom: `${fontSize * 0.5}px`,
+                    filter: `brightness(${prompterTextBrightness}%)`,
+                    color: activeLine === index + 1 ? 'hsl(var(--accent))' : undefined,
                 }}
                 >
                 {line || '\u00A0'}{/* Non-breaking space for empty lines */}
@@ -109,23 +119,52 @@ export default function PrompterPanel() {
         </div>
       </div>
       <div className="absolute bottom-4 right-4 flex flex-col gap-2">
-        <IconButton
-          tooltip={isPrompterDarkMode ? "Light Mode" : "Dark Mode"}
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsPrompterDarkMode(!isPrompterDarkMode)}
-          }
-          className={cn(isPrompterDarkMode && 'text-white bg-gray-800 hover:bg-gray-700 hover:text-white')}
-        >
-          <Contrast className="h-5 w-5" />
-        </IconButton>
+      <Popover>
+          <PopoverTrigger asChild>
+            <IconButton
+              tooltip={isPrompterDarkMode ? "Light Mode" : "Dark Mode"}
+              onClick={(e) => e.stopPropagation()}
+              className={cn(isPrompterDarkMode && 'text-white hover:text-white')}
+            >
+              <Contrast className="h-5 w-5" />
+            </IconButton>
+          </PopoverTrigger>
+          <PopoverContent 
+            side="top" 
+            align="end" 
+            className="w-48 p-4"
+            onOpenAutoFocus={(e) => e.preventDefault()}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="space-y-4">
+              <div className='space-y-2'>
+                <Label htmlFor="brightness-slider">Brightness</Label>
+                <Slider
+                  id="brightness-slider"
+                  value={[prompterTextBrightness]}
+                  onValueChange={(value) => setPrompterTextBrightness(value[0])}
+                  min={20}
+                  max={100}
+                  step={5}
+                />
+              </div>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => setIsPrompterDarkMode(!isPrompterDarkMode)}
+              >
+                {isPrompterDarkMode ? "Light Mode" : "Dark Mode"}
+              </Button>
+            </div>
+          </PopoverContent>
+        </Popover>
         <IconButton
           tooltip={isPrompterFullscreen ? "Exit Fullscreen" : "Fullscreen"}
           onClick={(e) => {
             e.stopPropagation();
             setIsPrompterFullscreen(!isPrompterFullscreen)}
           }
-           className={cn(isPrompterDarkMode && 'text-white bg-gray-800 hover:bg-gray-700 hover:text-white')}
+           className={cn(isPrompterDarkMode && 'text-white hover:text-white')}
         >
           {isPrompterFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
         </IconButton>
