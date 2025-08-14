@@ -91,6 +91,7 @@ export default function PrompterPanel() {
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
       longPressTimer.current = undefined;
+      // Only toggle dark mode on a short click
       setIsPrompterDarkMode(prev => !prev);
     }
   };
