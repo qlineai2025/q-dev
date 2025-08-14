@@ -51,6 +51,10 @@ interface AppContextType {
   setIsFlippedVertical: (flipped: boolean) => void;
   isFlippedHorizontal: boolean;
   setIsFlippedHorizontal: (flipped: boolean) => void;
+  isAssistModeOn: boolean;
+  setIsAssistModeOn: (isOn: boolean) => void;
+  sessionId: string | null;
+  setSessionId: (id: string | null) => void;
 }
 
 export const AppContext = createContext<AppContextType | null>(null);
@@ -74,6 +78,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [prompterTextBrightness, setPrompterTextBrightness] = useState<number>(100);
   const [isFlippedVertical, setIsFlippedVertical] = useState<boolean>(false);
   const [isFlippedHorizontal, setIsFlippedHorizontal] = useState<boolean>(false);
+  const [isAssistModeOn, setIsAssistModeOn] = useState<boolean>(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
 
   const contextValue = useMemo(
@@ -112,6 +118,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setIsFlippedVertical,
       isFlippedHorizontal,
       setIsFlippedHorizontal,
+      isAssistModeOn,
+      setIsAssistModeOn,
+      sessionId,
+      setSessionId,
     }),
     [
       script,
@@ -131,6 +141,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       prompterTextBrightness,
       isFlippedVertical,
       isFlippedHorizontal,
+      isAssistModeOn,
+      sessionId,
     ]
   );
 

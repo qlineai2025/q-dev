@@ -15,6 +15,7 @@ import {
   FileUp,
   Settings2,
   Check,
+  ScreenShare,
 } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { Slider } from '@/components/ui/slider';
@@ -35,6 +36,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { useFirestoreSync } from '@/hooks/use-firestore-sync';
 
 export default function ControlsPanel() {
   const {
@@ -51,13 +53,19 @@ export default function ControlsPanel() {
     isListening,
     setIsListening,
     setScript,
+    isAssistModeOn,
+    setIsAssistModeOn,
+    setSessionId,
   } = useApp();
+
+  useFirestoreSync();
 
   const { toast } = useToast();
   const { startListening, stopListening, error, audioDeviceId, setAudioDeviceId } = useVoiceControl();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
   const [isAudioSettingsOpen, setIsAudioSettingsOpen] = useState(false);
+  const assistWindowRef = useRef<Window | null>(null);
 
   useEffect(() => {
     if (error) {
@@ -69,7 +77,7 @@ export default function ControlsPanel() {
       setIsListening(false);
     }
   }, [error, toast, setIsListening]);
-  
+
   const handleListenToggle = () => {
     if (isListening) {
       stopListening();
@@ -102,7 +110,6 @@ export default function ControlsPanel() {
   const handleAudioSettingsClick = async () => {
     if (!isAudioSettingsOpen) {
       try {
-        // Request permissions and get devices
         await navigator.mediaDevices.getUserMedia({ audio: true });
         const devices = await navigator.mediaDevices.enumerateDevices();
         const audioInputDevices = devices.filter(device => device.kind === 'audioinput');
@@ -129,6 +136,33 @@ export default function ControlsPanel() {
     });
   }
 
+  const handleToggleAssistMode = () => {
+    if (isAssistModeOn) {
+        if (assistWindowRef.current) {
+            assistWindowRef.current.close();
+            assistWindowRef.current = null;
+        }
+        setIsAssistModeOn(false);
+        setSessionId(null);
+    } else {
+        const newSessionId = Date.now().toString();
+        setSessionId(newSessionId);
+        setIsAssistModeOn(true);
+        const assistUrl = `/assist/${newSessionId}`;
+        const newWindow = window.open(assistUrl, '_blank', 'noopener,noreferrer');
+        assistWindowRef.current = newWindow;
+        
+        // Monitor the new window
+        const interval = setInterval(() => {
+            if (newWindow?.closed) {
+                setIsAssistModeOn(false);
+                setSessionId(null);
+                clearInterval(interval);
+            }
+        }, 1000);
+    }
+  };
+
   return (
     <aside className="w-full border-border bg-background p-4 shadow-lg lg:h-full lg:w-[200px] lg:border-r">
       <div className="flex h-full flex-col">
@@ -152,12 +186,20 @@ export default function ControlsPanel() {
         </div>
 
         <div className="my-2 flex items-center justify-center">
+            <IconButton
+              tooltip="Assist Mode"
+              onClick={handleToggleAssistMode}
+              className={cn("rounded-none", isAssistModeOn && "bg-accent text-accent-foreground")}
+            >
+              <ScreenShare className="h-5 w-5" />
+            </IconButton>
+
             <Popover open={isAudioSettingsOpen} onOpenChange={setIsAudioSettingsOpen}>
                 <PopoverTrigger asChild>
                     <Button 
                         variant="default" 
                         size="icon" 
-                        className="rounded-r-none bg-primary/90 hover:bg-primary/80"
+                        className="rounded-none bg-primary/90 hover:bg-primary/80"
                         onClick={handleAudioSettingsClick}
                     >
                         <Settings2 className="h-5 w-5" />
