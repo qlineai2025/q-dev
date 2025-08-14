@@ -162,7 +162,7 @@ export default function PrompterPanel() {
             e.stopPropagation();
             handleRewind();
           }}
-          className={cn(isPrompterDarkMode && 'text-white hover:text-white bg-transparent hover:bg-white/10')}
+          className={cn(isPrompterDarkMode && 'text-white/70 hover:text-white bg-transparent hover:bg-white/10')}
         >
           <Rewind className="h-5 w-5" />
         </IconButton>
@@ -179,7 +179,7 @@ export default function PrompterPanel() {
             >
               <IconButton
                 tooltip="Click: Toggle Dark Mode, Long-press: Brightness"
-                className={cn(isPrompterDarkMode && 'text-white hover:text-white bg-transparent hover:bg-white/10')}
+                className={cn(isPrompterDarkMode && 'text-white/70 hover:text-white bg-transparent hover:bg-white/10')}
                 onClick={() => {}} 
               >
                 <Contrast className="h-5 w-5" />
@@ -212,7 +212,7 @@ export default function PrompterPanel() {
             e.stopPropagation();
             setIsFlippedHorizontal(!isFlippedHorizontal);
           }}
-          className={cn(isPrompterDarkMode && 'text-white hover:text-white bg-transparent hover:bg-white/10')}
+          className={cn(isPrompterDarkMode && 'text-white/70 hover:text-white bg-transparent hover:bg-white/10')}
         >
           <FlipHorizontal className="h-5 w-5" />
         </IconButton>
@@ -222,7 +222,7 @@ export default function PrompterPanel() {
             e.stopPropagation();
             setIsFlippedVertical(!isFlippedVertical);
           }}
-          className={cn(isPrompterDarkMode && 'text-white hover:text-white bg-transparent hover:bg-white/10')}
+          className={cn(isPrompterDarkMode && 'text-white/70 hover:text-white bg-transparent hover:bg-white/10')}
         >
           <FlipVertical className="h-5 w-5" />
         </IconButton>
@@ -232,7 +232,7 @@ export default function PrompterPanel() {
             e.stopPropagation();
             setIsPrompterFullscreen(!isPrompterFullscreen)}
           }
-           className={cn(isPrompterDarkMode && 'text-white hover:text-white bg-transparent hover:bg-white/10')}
+           className={cn(isPrompterDarkMode && 'text-white/70 hover:text-white bg-transparent hover:bg-white/10')}
         >
           {isPrompterFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
         </IconButton>
