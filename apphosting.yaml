@@ -8,16 +8,20 @@ runConfig:
   # memoryMiB: 512
 
 # Environment variables and secrets.
-# env:
+env:
   # Configure environment variables.
   # See https://firebase.google.com/docs/app-hosting/configure#user-defined-environment
-  # - variable: MESSAGE
-  #   value: Hello world!
-  #   availability:
-  #     - BUILD
-  #     - RUNTIME
-
-  # Grant access to secrets in Cloud Secret Manager.
-  # See https://firebase.google.com/docs/app-hosting/configure#secret-parameters
-  # - variable: MY_SECRET
-  #   secret: mySecretRef
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    value: "AIzaSyDC-YU8Wr8Sq2plGVZZCvaiIcUp-qNqc_4"
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: "q-dev-0.firebaseapp.com"
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: "q-dev-0"
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: "q-dev-0.appspot.com"
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    value: "191839048631"
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: "1:191839048631:web:5f9172817651c619384e32"
+  - variable: NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+    value: "G-JVVF02R2K6"
