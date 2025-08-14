@@ -20,6 +20,7 @@ import AuthButton from '@/components/q/auth-button';
 import { useVoiceControl } from '@/hooks/use-voice-control';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '../ui/button';
+import { cn } from '@/lib/utils';
 
 export default function ControlsPanel() {
   const {
@@ -84,8 +85,23 @@ export default function ControlsPanel() {
   return (
     <aside className="w-full border-border bg-card p-4 shadow-lg lg:h-full lg:w-[320px] lg:border-r">
       <div className="flex h-full flex-col">
-        <div className="flex items-center justify-end p-2">
-            <AuthButton />
+        <div className="flex w-full items-center rounded-md border">
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            className="hidden"
+            accept=".txt,.md"
+          />
+          <Button
+            variant="ghost"
+            className="flex-1 justify-start rounded-r-none border-r"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <FileUp className="mr-2 h-4 w-4" />
+            Import Script...
+          </Button>
+          <AuthButton />
         </div>
 
         <div className="my-6 flex justify-center gap-4">
@@ -145,23 +161,6 @@ export default function ControlsPanel() {
             max={45}
             step={1}
           />
-           <div className="mt-auto pt-8">
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              className="hidden"
-              accept=".txt,.md"
-            />
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <FileUp className="mr-2 h-4 w-4" />
-              Import from File
-            </Button>
-          </div>
         </div>
       </div>
     </aside>

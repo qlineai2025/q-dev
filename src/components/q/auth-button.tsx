@@ -56,7 +56,7 @@ export default function AuthButton() {
           <Tooltip>
             <TooltipTrigger asChild>
               <DropdownMenuTrigger asChild>
-                <Avatar className="h-9 w-9 cursor-pointer">
+                <Avatar className="h-9 w-9 cursor-pointer rounded-none">
                   <AvatarImage src={user.photoURL || ''} alt={user.displayName || 'User'} />
                   <AvatarFallback>
                     {user.displayName?.charAt(0) || user.email?.charAt(0) || 'U'}
@@ -82,7 +82,7 @@ export default function AuthButton() {
   }
 
   return (
-    <IconButton tooltip="Sign in with Google" onClick={handleSignIn}>
+    <IconButton tooltip="Sign in with Google" onClick={handleSignIn} className="rounded-l-none">
       <LogIn className="h-5 w-5" />
     </IconButton>
   );
