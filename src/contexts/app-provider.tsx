@@ -6,9 +6,7 @@ import type { ReactNode } from 'react';
 import React, { createContext, useState, useMemo } from 'react';
 import type { IntelligentScriptIndexingOutput } from '@/ai/flows/intelligent-script-indexing';
 
-const initialScript = `Q_ Teleprompter Application
-
-Welcome to Q_, your AI-powered teleprompter.
+const initialScript = `Welcome to Q_, your AI-powered teleprompter.
 
 This is a sample script to demonstrate the functionality. You can edit this text directly in the script editor panel on the left.
 

@@ -20,7 +20,8 @@ import { Slider } from '@/components/ui/slider';
 import AuthButton from '@/components/q/auth-button';
 import { useVoiceControl } from '@/hooks/use-voice-control';
 import { useToast } from '@/hooks/use-toast';
-import { Button, IconButton } from '../ui/button';
+import { Button } from '../ui/button';
+import { IconButton } from '../ui/icon-button';
 import { cn } from '@/lib/utils';
 import {
   Tooltip,
@@ -183,32 +184,25 @@ export default function ControlsPanel() {
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-64" align="start">
-                    <div className="grid gap-4">
-                    <div className="space-y-2">
-                        <h4 className="font-medium leading-none">Audio Settings</h4>
-                        <p className="text-sm text-muted-foreground">
-                        Select your microphone input device.
-                        </p>
-                    </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="audio-input">Microphone</Label>
-                        <Select
-                            value={audioDeviceId ?? ''}
-                            onValueChange={setAudioDeviceId}
-                        >
-                            <SelectTrigger id="audio-input" className="w-full">
-                                <SelectValue placeholder="Select a device" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {audioDevices.map(device => (
-                                    <SelectItem key={device.deviceId} value={device.deviceId}>
-                                        {device.label || `Microphone ${audioDevices.indexOf(device) + 1}`}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    </div>
+                  {audioDevices.length > 0 ? (
+                    <Select
+                        value={audioDeviceId ?? ''}
+                        onValueChange={setAudioDeviceId}
+                    >
+                        <SelectTrigger id="audio-input" className="w-full">
+                            <SelectValue placeholder="Select a device" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {audioDevices.map(device => (
+                                <SelectItem key={device.deviceId} value={device.deviceId}>
+                                    {device.label || `Microphone ${audioDevices.indexOf(device) + 1}`}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                  ) : (
+                     <p className="text-sm text-muted-foreground">No audio devices found.</p>
+                  )}
                 </PopoverContent>
             </Popover>
         </div>
