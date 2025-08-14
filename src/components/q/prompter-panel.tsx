@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Maximize, Minimize, Contrast, FlipVertical, FlipHorizontal, Rewind } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { cn } from '@/lib/utils';
@@ -25,7 +25,7 @@ export default function PrompterPanel() {
     isFlippedVertical,
     setIsFlippedVertical,
     isFlippedHorizontal,
-    setIsFlippedHorizontal,
+    setIsFlippedHorizontal, 
   } = useApp();
 
   const [isBrightnessPopoverOpen, setIsBrightnessPopoverOpen] = useState(false);
@@ -124,3 +124,5 @@ export default function PrompterPanel() {
     </main>
   );
 }
+
+    

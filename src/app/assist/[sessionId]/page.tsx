@@ -8,7 +8,7 @@ import { db } from '@/lib/firebase';
 import type { AppState } from '@/hooks/use-firestore-sync';
 import PrompterView from '@/components/q/prompter-view';
 import { cn } from '@/lib/utils';
-import { AppProvider } from '@/contexts/app-provider';
+import { AppProvider, AppContext } from '@/contexts/app-provider';
 
 
 function AssistPrompterView() {
@@ -85,3 +85,5 @@ export default function AssistPage() {
         </AppProvider>
     )
 }
+
+    

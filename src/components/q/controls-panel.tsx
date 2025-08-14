@@ -64,8 +64,8 @@ export default function ControlsPanel() {
   const { startListening, stopListening, error, audioDeviceId, setAudioDeviceId } = useVoiceControl();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
-  const [isAudioSettingsOpen, setIsAudioSettingsOpen] = useState(false);
   const assistWindowRef = useRef<Window | null>(null);
+  const [isAudioSettingsOpen, setIsAudioSettingsOpen] = useState(false);
 
   useEffect(() => {
     if (error) {
@@ -186,14 +186,6 @@ export default function ControlsPanel() {
         </div>
 
         <div className="my-2 flex items-center justify-center">
-            <IconButton
-              tooltip="Assist Mode"
-              onClick={handleToggleAssistMode}
-              className={cn("rounded-none", isAssistModeOn && "bg-accent text-accent-foreground")}
-            >
-              <ScreenShare className="h-5 w-5" />
-            </IconButton>
-
             <Popover open={isAudioSettingsOpen} onOpenChange={setIsAudioSettingsOpen}>
                 <PopoverTrigger asChild>
                     <Button 
@@ -240,6 +232,13 @@ export default function ControlsPanel() {
                 <Play className="h-5 w-5" />
               )}
             </Button>
+            <IconButton
+                tooltip="Assist Mode"
+                onClick={handleToggleAssistMode}
+                className={cn(isAssistModeOn && "bg-accent text-accent-foreground")}
+            >
+                <ScreenShare className="h-5 w-5" />
+            </IconButton>
             <Button
                 variant={isListening ? "destructive" : "default"}
                 onClick={handleListenToggle}
@@ -343,3 +342,5 @@ function ControlSlider({ label, icon, value, orientation = "horizontal", ...prop
     </div>
   );
 }
+
+    
