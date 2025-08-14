@@ -72,7 +72,7 @@ export default function PrompterPanel() {
     setIsPlaying(!isPlaying);
   };
 
-  const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     e.stopPropagation();
     longPressTimer.current = setTimeout(() => {
       setIsBrightnessPopoverOpen(true);
@@ -80,7 +80,7 @@ export default function PrompterPanel() {
     }, 500);
   };
   
-  const handlePointerUp = (e: React.PointerEvent<HTMLButtonElement>) => {
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
     e.stopPropagation();
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
@@ -142,7 +142,7 @@ export default function PrompterPanel() {
       <div className="absolute bottom-4 right-4 flex flex-col gap-2">
       <Popover open={isBrightnessPopoverOpen} onOpenChange={setIsBrightnessPopoverOpen}>
           <PopoverTrigger asChild>
-            <button
+            <div
               onPointerDown={handlePointerDown}
               onPointerUp={handlePointerUp}
               onClick={(e) => {
@@ -159,7 +159,7 @@ export default function PrompterPanel() {
               >
                 <Contrast className="h-5 w-5" />
               </IconButton>
-            </button>
+            </div>
           </PopoverTrigger>
           <PopoverContent 
             side="top" 
