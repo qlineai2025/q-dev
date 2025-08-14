@@ -21,6 +21,12 @@ import { useVoiceControl } from '@/hooks/use-voice-control';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '../ui/button';
 import { cn } from '@/lib/utils';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 export default function ControlsPanel() {
   const {
@@ -104,7 +110,7 @@ export default function ControlsPanel() {
           <AuthButton />
         </div>
 
-        <div className="my-6 flex items-center justify-center rounded-md border">
+        <div className="my-4 flex items-center justify-center rounded-md border">
             <Button
               onClick={() => setIsPlaying(!isPlaying)}
               variant="ghost"
@@ -183,9 +189,17 @@ function ControlSlider({ label, icon, value, ...props }: ControlSliderProps) {
       <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
         {icon}
         <Label>{label}</Label>
-        <span className="ml-auto text-foreground font-mono text-base">{value}</span>
       </div>
-      <Slider defaultValue={[value]} value={[value]} {...props} />
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Slider defaultValue={[value]} value={[value]} {...props} />
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{value}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </div>
   );
 }
