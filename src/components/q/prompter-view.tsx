@@ -5,7 +5,6 @@ import type { ComponentProps } from 'react';
 import { useEffect, useRef } from 'react';
 import { useApp } from '@/hooks/use-app';
 import { cn } from '@/lib/utils';
-import { Textarea } from '../ui/textarea';
 
 interface PrompterViewProps {
   onPanelClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
@@ -15,7 +14,6 @@ interface PrompterViewProps {
 export default function PrompterView({ onPanelClick, isAssistMode = false }: PrompterViewProps) {
   const { 
     script, 
-    setScript,
     fontSize, 
     horizontalMargin, 
     verticalMargin,
@@ -28,7 +26,7 @@ export default function PrompterView({ onPanelClick, isAssistMode = false }: Pro
     isFlippedHorizontal,
   } = useApp();
   const prompterRef = useRef<HTMLDivElement>(null);
-  const lineRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const lineRefs = useRef<(HTMLParagraphElement | null)[]>([]);
 
   const scriptLines = script.split('\n');
 
@@ -58,6 +56,8 @@ export default function PrompterView({ onPanelClick, isAssistMode = false }: Pro
     }
   }, [activeLine]);
 
+  const prompterTextColor = isAssistMode || isPrompterDarkMode ? 'text-white/90' : 'text-primary';
+
   return (
       <div
         id="prompter-main-view"
@@ -73,7 +73,6 @@ export default function PrompterView({ onPanelClick, isAssistMode = false }: Pro
           paddingRight: `${horizontalMargin}%`,
           paddingTop: `${verticalMargin}vh`,
           paddingBottom: `${verticalMargin}vh`,
-          filter: !isPrompterDarkMode ? `brightness(${prompterTextBrightness}%)` : 'none',
         }}
       >
         <div className={cn(
@@ -83,40 +82,25 @@ export default function PrompterView({ onPanelClick, isAssistMode = false }: Pro
             <div
               className={cn(isFlippedHorizontal && 'transform-gpu scale-x-[-1]')}
             >
-              {isAssistMode ? (
-                  scriptLines.map((line, index) => (
-                    <p
-                      key={index}
-                      ref={(el: any) => (lineRefs.current[index] = el)}
-                      className={cn(
-                        'w-full break-words text-white/90',
-                        index === activeLine - 1 && '!text-accent'
-                      )}
-                      style={{
-                        fontSize: `${fontSize}px`,
-                        lineHeight: 1.5,
-                        filter: `brightness(${prompterTextBrightness}%)`,
-                        minHeight: '1em', // Prevents empty lines from collapsing
-                      }}
-                    >
-                      {line || ' '}
-                    </p>
-                  ))
-              ) : (
-                <Textarea
-                  value={script}
-                  onChange={(e) => setScript(e.target.value)}
+              {scriptLines.map((line, index) => (
+                <p
+                  key={index}
+                  ref={(el) => (lineRefs.current[index] = el)}
                   className={cn(
-                    "h-full w-full resize-none border-0 bg-transparent p-0 text-center focus-visible:ring-0 focus-visible:ring-offset-0",
-                    isPrompterDarkMode ? 'text-white/90 caret-white' : 'text-primary caret-primary',
+                    'w-full break-words',
+                    prompterTextColor,
+                    index === activeLine - 1 && '!text-accent'
                   )}
                   style={{
                     fontSize: `${fontSize}px`,
                     lineHeight: 1.5,
-                    filter: isPrompterDarkMode ? `brightness(${prompterTextBrightness}%)` : 'none',
+                    filter: `brightness(${prompterTextBrightness}%)`,
+                    minHeight: '1em', // Prevents empty lines from collapsing
                   }}
-                />
-              )}
+                >
+                  {line || ' '}
+                </p>
+              ))}
             </div>
         </div>
       </div>
