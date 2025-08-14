@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { User } from 'firebase/auth';
@@ -44,6 +45,10 @@ interface AppContextType {
   setActiveLine: (line: number | null) => void;
   isScriptEditorExpanded: boolean;
   setIsScriptEditorExpanded: (expanded: boolean) => void;
+  isPrompterDarkMode: boolean;
+  setIsPrompterDarkMode: (darkMode: boolean) => void;
+  isPrompterFullscreen: boolean;
+  setIsPrompterFullscreen: (fullscreen: boolean) => void;
 }
 
 export const AppContext = createContext<AppContextType | null>(null);
@@ -62,6 +67,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [isLoadingIndex, setIsLoadingIndex] = useState<boolean>(false);
   const [activeLine, setActiveLine] = useState<number | null>(null);
   const [isScriptEditorExpanded, setIsScriptEditorExpanded] = useState<boolean>(true);
+  const [isPrompterDarkMode, setIsPrompterDarkMode] = useState<boolean>(false);
+  const [isPrompterFullscreen, setIsPrompterFullscreen] = useState<boolean>(false);
 
   const contextValue = useMemo(
     () => ({
@@ -89,6 +96,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setActiveLine,
       isScriptEditorExpanded,
       setIsScriptEditorExpanded,
+      isPrompterDarkMode,
+      setIsPrompterDarkMode,
+      isPrompterFullscreen,
+      setIsPrompterFullscreen,
     }),
     [
       script,
@@ -103,6 +114,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       isListening,
       activeLine,
       isScriptEditorExpanded,
+      isPrompterDarkMode,
+      isPrompterFullscreen,
     ]
   );
 

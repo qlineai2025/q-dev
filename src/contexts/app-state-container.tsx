@@ -8,7 +8,12 @@ import { cn } from '@/lib/utils';
 
 
 export function AppStateContainer() {
-  const { isScriptEditorExpanded } = useApp();
+  const { isScriptEditorExpanded, isPrompterFullscreen } = useApp();
+  
+  if (isPrompterFullscreen) {
+    return <PrompterPanel />;
+  }
+  
   return (
       <div className="flex h-dvh w-full flex-col bg-background font-body">
         <div className="flex-1 overflow-hidden">
@@ -18,7 +23,7 @@ export function AppStateContainer() {
           </div>
         </div>
         <div className={cn(
-          "transition-all duration-300 ease-in-out",
+          "flex-none transition-all duration-300 ease-in-out",
           isScriptEditorExpanded ? "h-[40vh]" : "h-[8vh]"
         )}>
           <ScriptEditorPanel />

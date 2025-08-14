@@ -1,11 +1,27 @@
+
 "use client";
 
 import { useEffect, useRef } from 'react';
+import { Maximize, Minimize, Sun, Moon } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { cn } from '@/lib/utils';
+import IconButton from './icon-button';
 
 export default function PrompterPanel() {
-  const { script, fontSize, horizontalMargin, verticalMargin, isPlaying, scrollSpeed, activeLine } = useApp();
+  const { 
+    script, 
+    fontSize, 
+    horizontalMargin, 
+    verticalMargin, 
+    isPlaying, 
+    setIsPlaying, 
+    scrollSpeed, 
+    activeLine,
+    isPrompterDarkMode,
+    setIsPrompterDarkMode,
+    isPrompterFullscreen,
+    setIsPrompterFullscreen
+  } = useApp();
   const prompterRef = useRef<HTMLDivElement>(null);
   const lineRefs = useRef<(HTMLParagraphElement | null)[]>([]);
 
@@ -36,18 +52,34 @@ export default function PrompterPanel() {
       });
     }
   }, [activeLine]);
+  
+  const handlePanelClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Only toggle play/pause if the click is on the background, not on buttons
+    if ((e.target as HTMLElement).closest('button')) {
+      return;
+    }
+    setIsPlaying(!isPlaying);
+  };
 
 
   return (
-    <main className="flex-1 overflow-hidden bg-background p-4">
+    <main 
+      className={cn(
+        "relative flex-1 overflow-hidden p-4",
+        isPrompterDarkMode ? 'bg-black' : 'bg-background',
+        isPrompterFullscreen && 'h-dvh w-dvw p-8'
+      )}
+      onClick={handlePanelClick}
+    >
       <div
         ref={prompterRef}
-        className="h-full overflow-y-scroll rounded-md border scroll-smooth"
+        className="h-full cursor-pointer overflow-y-scroll rounded-md border scroll-smooth"
         style={{
           paddingLeft: `${horizontalMargin}%`,
           paddingRight: `${horizontalMargin}%`,
+          borderColor: isPrompterDarkMode ? 'hsl(var(--border))' : undefined,
         }}
-    >
+      >
         <div className="flex min-h-full flex-col justify-center">
             <div style={{
               paddingTop: `${verticalMargin}vh`,
@@ -59,7 +91,9 @@ export default function PrompterPanel() {
                 ref={(el) => (lineRefs.current[index] = el)}
                 className={cn(
                     'transition-colors duration-300',
-                    activeLine === index + 1 ? 'text-accent' : 'text-primary'
+                    isPrompterDarkMode
+                      ? (activeLine === index + 1 ? 'text-accent' : 'text-white')
+                      : (activeLine === index + 1 ? 'text-accent' : 'text-primary')
                 )}
                 style={{
                     fontSize: `${fontSize}px`,
@@ -72,6 +106,28 @@ export default function PrompterPanel() {
             ))}
             </div>
         </div>
+      </div>
+      <div className="absolute bottom-4 right-4 flex gap-2">
+        <IconButton
+          tooltip={isPrompterDarkMode ? "Light Mode" : "Dark Mode"}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsPrompterDarkMode(!isPrompterDarkMode)}
+          }
+          className={cn(isPrompterDarkMode && 'text-white hover:bg-gray-700 hover:text-white')}
+        >
+          {isPrompterDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+        </IconButton>
+        <IconButton
+          tooltip={isPrompterFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsPrompterFullscreen(!isPrompterFullscreen)}
+          }
+           className={cn(isPrompterDarkMode && 'text-white hover:bg-gray-700 hover:text-white')}
+        >
+          {isPrompterFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
+        </IconButton>
       </div>
     </main>
   );
