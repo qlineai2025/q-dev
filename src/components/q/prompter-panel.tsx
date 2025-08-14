@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from 'react';
-import { Maximize, Minimize, Contrast } from 'lucide-react';
+import { Maximize, Minimize, Contrast, FlipVertical } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { cn } from '@/lib/utils';
 import IconButton from './icon-button';
@@ -18,7 +18,6 @@ export default function PrompterPanel() {
     script, 
     fontSize, 
     horizontalMargin, 
-    verticalMargin, 
     isPlaying, 
     setIsPlaying, 
     scrollSpeed, 
@@ -29,6 +28,8 @@ export default function PrompterPanel() {
     setIsPrompterFullscreen,
     prompterTextBrightness,
     setPrompterTextBrightness,
+    isFlipped,
+    setIsFlipped
   } = useApp();
   const prompterRef = useRef<HTMLDivElement>(null);
   const lineRefs = useRef<(HTMLParagraphElement | null)[]>([]);
@@ -112,10 +113,9 @@ export default function PrompterPanel() {
         }}
       >
         <div className="flex min-h-full flex-col justify-center">
-            <div style={{
-              paddingTop: `${verticalMargin}vh`,
-              paddingBottom: `${verticalMargin}vh`,
-            }}>
+            <div
+              className={cn(isFlipped && 'transform-gpu scale-y-[-1]')}
+            >
             {scriptLines.map((line, index) => (
                 <p
                 key={index}
@@ -178,6 +178,16 @@ export default function PrompterPanel() {
             </div>
           </PopoverContent>
         </Popover>
+         <IconButton
+          tooltip="Flip Vertically"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsFlipped(!isFlipped);
+          }}
+          className={cn(isPrompterDarkMode && 'text-white hover:text-white bg-transparent hover:bg-white/10')}
+        >
+          <FlipVertical className="h-5 w-5" />
+        </IconButton>
         <IconButton
           tooltip={isPrompterFullscreen ? "Exit Fullscreen" : "Fullscreen"}
           onClick={(e) => {

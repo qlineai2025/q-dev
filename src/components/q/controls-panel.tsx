@@ -9,7 +9,6 @@ import {
   Mic,
   MicOff,
   MoveHorizontal,
-  MoveVertical,
   Timer,
   FileUp
 } from 'lucide-react';
@@ -36,8 +35,6 @@ export default function ControlsPanel() {
     setScrollSpeed,
     horizontalMargin,
     setHorizontalMargin,
-    verticalMargin,
-    setVerticalMargin,
     isPlaying,
     setIsPlaying,
     isListening,
@@ -166,16 +163,6 @@ export default function ControlsPanel() {
             icon={<MoveHorizontal className="h-5 w-5" />}
             value={horizontalMargin}
             onValueChange={(val) => setHorizontalMargin(val[0])}
-            min={0}
-            max={45}
-            step={1}
-            orientation="vertical"
-          />
-          <ControlSlider
-            label="Vertical Margin"
-            icon={<MoveVertical className="h-5 w-5" />}
-            value={verticalMargin}
-            onValueChange={(val) => setVerticalMargin(val[0])}
             min={0}
             max={45}
             step={1}

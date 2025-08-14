@@ -29,8 +29,6 @@ interface AppContextType {
   setScrollSpeed: (speed: number) => void;
   horizontalMargin: number;
   setHorizontalMargin: (margin: number) => void;
-  verticalMargin: number;
-  setVerticalMargin: (margin: number) => void;
   isPlaying: boolean;
   setIsPlaying: (playing: boolean) => void;
   user: User | null;
@@ -51,6 +49,8 @@ interface AppContextType {
   setIsPrompterFullscreen: (fullscreen: boolean) => void;
   prompterTextBrightness: number;
   setPrompterTextBrightness: (brightness: number) => void;
+  isFlipped: boolean;
+  setIsFlipped: (flipped: boolean) => void;
 }
 
 export const AppContext = createContext<AppContextType | null>(null);
@@ -60,7 +60,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [fontSize, setFontSize] = useState<number>(64);
   const [scrollSpeed, setScrollSpeed] = useState<number>(50);
   const [horizontalMargin, setHorizontalMargin] = useState<number>(10);
-  const [verticalMargin, setVerticalMargin] = useState<number>(10);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isListening, setIsListening] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
@@ -72,6 +71,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [isPrompterDarkMode, setIsPrompterDarkMode] = useState<boolean>(true);
   const [isPrompterFullscreen, setIsPrompterFullscreen] = useState<boolean>(false);
   const [prompterTextBrightness, setPrompterTextBrightness] = useState<number>(100);
+  const [isFlipped, setIsFlipped] = useState<boolean>(false);
 
   const contextValue = useMemo(
     () => ({
@@ -83,8 +83,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setScrollSpeed,
       horizontalMargin,
       setHorizontalMargin,
-      verticalMargin,
-      setVerticalMargin,
       isPlaying,
       setIsPlaying,
       user,
@@ -105,13 +103,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setIsPrompterFullscreen,
       prompterTextBrightness,
       setPrompterTextBrightness,
+      isFlipped,
+      setIsFlipped,
     }),
     [
       script,
       fontSize,
       scrollSpeed,
       horizontalMargin,
-      verticalMargin,
       isPlaying,
       user,
       indexedScript,
@@ -122,6 +121,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       isPrompterDarkMode,
       isPrompterFullscreen,
       prompterTextBrightness,
+      isFlipped,
     ]
   );
 
