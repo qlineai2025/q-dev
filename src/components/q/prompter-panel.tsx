@@ -5,7 +5,7 @@ import { useApp } from '@/hooks/use-app';
 import { cn } from '@/lib/utils';
 
 export default function PrompterPanel() {
-  const { script, fontSize, margin, isPlaying, scrollSpeed, activeLine } = useApp();
+  const { script, fontSize, horizontalMargin, verticalMargin, isPlaying, scrollSpeed, activeLine } = useApp();
   const prompterRef = useRef<HTMLDivElement>(null);
   const lineRefs = useRef<(HTMLParagraphElement | null)[]>([]);
 
@@ -44,12 +44,15 @@ export default function PrompterPanel() {
         ref={prompterRef}
         className="h-full overflow-y-scroll rounded-md border scroll-smooth"
         style={{
-        paddingLeft: `${margin}%`,
-        paddingRight: `${margin}%`,
+          paddingLeft: `${horizontalMargin}%`,
+          paddingRight: `${horizontalMargin}%`,
         }}
     >
         <div className="flex min-h-full flex-col justify-center">
-            <div className="py-[50vh]">
+            <div style={{
+              paddingTop: `${verticalMargin}vh`,
+              paddingBottom: `${verticalMargin}vh`,
+            }}>
             {scriptLines.map((line, index) => (
                 <p
                 key={index}

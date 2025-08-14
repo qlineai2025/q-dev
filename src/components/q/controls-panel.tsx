@@ -9,6 +9,7 @@ import {
   Mic,
   MicOff,
   MoveHorizontal,
+  MoveVertical,
   Timer,
   FileUp
 } from 'lucide-react';
@@ -33,8 +34,10 @@ export default function ControlsPanel() {
     setFontSize,
     scrollSpeed,
     setScrollSpeed,
-    margin,
-    setMargin,
+    horizontalMargin,
+    setHorizontalMargin,
+    verticalMargin,
+    setVerticalMargin,
     isPlaying,
     setIsPlaying,
     isListening,
@@ -88,7 +91,7 @@ export default function ControlsPanel() {
 
 
   return (
-    <aside className="w-full border-border bg-background p-4 shadow-lg lg:h-full lg:w-[320px] lg:border-r">
+    <aside className="w-full border-border bg-background p-4 shadow-lg lg:h-full lg:w-[200px] lg:border-r">
       <div className="flex h-full flex-col">
         <div className="flex w-full items-center rounded-md border">
           <input
@@ -104,7 +107,7 @@ export default function ControlsPanel() {
             onClick={() => fileInputRef.current?.click()}
           >
             <FileUp className="mr-2 h-4 w-4" />
-            Import Script
+            Import
           </Button>
           <AuthButton />
         </div>
@@ -137,8 +140,7 @@ export default function ControlsPanel() {
               )}
             </IconButton>
         </div>
-
-        <div className="flex flex-1 flex-col gap-8 px-2">
+        <div className="flex flex-1 items-center justify-center gap-4 px-2 pt-4">
           <ControlSlider
             label="Font Size"
             icon={<Type className="h-5 w-5" />}
@@ -147,6 +149,7 @@ export default function ControlsPanel() {
             min={12}
             max={200}
             step={1}
+            orientation="vertical"
           />
           <ControlSlider
             label="Scroll Speed"
@@ -156,15 +159,27 @@ export default function ControlsPanel() {
             min={1}
             max={100}
             step={1}
+            orientation="vertical"
           />
           <ControlSlider
-            label="Margins"
+            label="Horizontal Margin"
             icon={<MoveHorizontal className="h-5 w-5" />}
-            value={margin}
-            onValueChange={(val) => setMargin(val[0])}
+            value={horizontalMargin}
+            onValueChange={(val) => setHorizontalMargin(val[0])}
             min={0}
             max={45}
             step={1}
+            orientation="vertical"
+          />
+          <ControlSlider
+            label="Vertical Margin"
+            icon={<MoveVertical className="h-5 w-5" />}
+            value={verticalMargin}
+            onValueChange={(val) => setVerticalMargin(val[0])}
+            min={0}
+            max={45}
+            step={1}
+            orientation="vertical"
           />
         </div>
       </div>
@@ -180,21 +195,36 @@ interface ControlSliderProps {
   min: number;
   max: number;
   step: number;
+  orientation?: "horizontal" | "vertical";
 }
 
-function ControlSlider({ label, icon, value, ...props }: ControlSliderProps) {
+function ControlSlider({ label, icon, value, orientation = "horizontal", ...props }: ControlSliderProps) {
   return (
-    <div className="grid gap-3">
+    <div className={cn(
+      "grid gap-3",
+      orientation === 'vertical' ? 'flex-1 flex flex-col items-center justify-center h-full' : ''
+    )}>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-              {icon}
-              <Slider defaultValue={[value]} value={[value]} {...props} />
-            </div>
+              <div className={cn(
+                "flex items-center gap-2 text-sm font-medium text-muted-foreground",
+                orientation === 'vertical' ? 'flex-col-reverse h-full' : ''
+              )}>
+                {icon}
+                <Slider 
+                  defaultValue={[value]} 
+                  value={[value]}
+                  orientation={orientation}
+                  className={cn(
+                    orientation === 'vertical' ? 'w-2 flex-1' : 'flex-1'
+                  )}
+                  {...props} 
+                />
+              </div>
           </TooltipTrigger>
-          <TooltipContent>
-            <p>{value}</p>
+          <TooltipContent side={orientation === 'vertical' ? 'right' : 'bottom'}>
+            <p>{label}: {value}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
