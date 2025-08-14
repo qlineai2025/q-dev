@@ -1,9 +1,7 @@
 
 "use client";
 
-import type { ComponentProps } from 'react';
-import { useEffect, useRef, useState } from 'react';
-import * as ReactDOM from 'react-dom';
+import { useState } from 'react';
 import { Maximize, Minimize, Contrast, FlipVertical, FlipHorizontal, Rewind, ScreenShare } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { cn } from '@/lib/utils';
@@ -16,25 +14,17 @@ import { Slider } from '../ui/slider';
 import { useToast } from '@/hooks/use-toast';
 import { IconButton } from '../ui/button';
 import { AssistWindow } from './assist-window';
+import PrompterView from './prompter-view';
 
 
 export default function PrompterPanel() {
   const { 
-    script, 
-    fontSize, 
-    horizontalMargin, 
-    verticalMargin,
     isPlaying, 
     setIsPlaying, 
-    scrollSpeed, 
     activeLine,
     setActiveLine,
-    isPrompterDarkMode,
-    setIsPrompterDarkMode,
     isPrompterFullscreen,
     setIsPrompterFullscreen,
-    prompterTextBrightness,
-    setPrompterTextBrightness,
     isFlippedVertical,
     setIsFlippedVertical,
     isFlippedHorizontal,
@@ -42,39 +32,9 @@ export default function PrompterPanel() {
     isAssistModeOn,
     setIsAssistModeOn,
   } = useApp();
-  const prompterRef = useRef<HTMLDivElement>(null);
-  const lineRefs = useRef<(HTMLParagraphElement | null)[]>([]);
-  const longPressTimer = useRef<NodeJS.Timeout>();
+
   const [isBrightnessPopoverOpen, setIsBrightnessPopoverOpen] = useState(false);
   const { toast } = useToast();
-  
-  const scriptLines = script.split('\n');
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    const prompterElement = prompterRef.current;
-
-    if (isPlaying && prompterElement) {
-      interval = setInterval(() => {
-        prompterElement.scrollBy({ top: 1, behavior: 'smooth' });
-      }, 120 - scrollSpeed); // Adjust timing based on speed
-    }
-
-    return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
-    };
-  }, [isPlaying, scrollSpeed]);
-  
-  useEffect(() => {
-    if (activeLine !== null && lineRefs.current[activeLine - 1]) {
-      lineRefs.current[activeLine - 1]?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-      });
-    }
-  }, [activeLine]);
   
   const handlePanelClick = (e: React.MouseEvent<HTMLDivElement>) => {
     // Only toggle play/pause if the click is on the background, not on buttons or popovers
@@ -84,24 +44,6 @@ export default function PrompterPanel() {
     setIsPlaying(!isPlaying);
   };
   
-  const handlePointerDown = (e: React.PointerEvent) => {
-    e.stopPropagation();
-    longPressTimer.current = setTimeout(() => {
-      setIsBrightnessPopoverOpen(true);
-      longPressTimer.current = undefined;
-    }, 500);
-  };
-  
-  const handlePointerUp = (e: React.PointerEvent) => {
-    e.stopPropagation();
-    if (longPressTimer.current) {
-      clearTimeout(longPressTimer.current);
-      longPressTimer.current = undefined;
-      // Only toggle dark mode on a short click
-      setIsPrompterDarkMode(prev => !prev);
-    }
-  };
-
   const handleRewind = () => {
     setActiveLine(1);
     toast({
@@ -114,57 +56,7 @@ export default function PrompterPanel() {
     setIsAssistModeOn(!isAssistModeOn);
   };
   
-  const prompterContent = (
-      <div
-        id="prompter-main-view"
-        ref={prompterRef}
-        className={cn(
-          "h-full overflow-y-scroll rounded-md border scroll-smooth text-center",
-          isPrompterDarkMode ? 'bg-black' : 'bg-background',
-        )}
-        style={{
-          paddingLeft: `${horizontalMargin}%`,
-          paddingRight: `${horizontalMargin}%`,
-          paddingTop: `${verticalMargin}vh`,
-          paddingBottom: `${verticalMargin}vh`,
-          filter: !isPrompterDarkMode ? `brightness(${prompterTextBrightness}%)` : 'none',
-        }}
-      >
-        <div className={cn(
-          "flex min-h-full flex-col",
-           isFlippedVertical && 'transform-gpu scale-y-[-1]'
-        )}>
-            <div
-              className={cn(isFlippedHorizontal && 'transform-gpu scale-x-[-1]')}
-            >
-              {scriptLines.map((line, index) => (
-                <p
-                  key={index}
-                  ref={(el) => (lineRefs.current[index] = el)}
-                  className={cn(
-                    'w-full break-words',
-                    isPrompterDarkMode ? 'text-white/70' : 'text-primary',
-                    index === activeLine - 1 && 'text-accent'
-                  )}
-                  style={{
-                    fontSize: `${fontSize}px`,
-                    lineHeight: 1.5,
-                    filter: isPrompterDarkMode ? `brightness(${prompterTextBrightness}%)` : 'none',
-                    minHeight: '1em',
-                  }}
-                >
-                  {line || ' '}
-                </p>
-              ))}
-            </div>
-        </div>
-      </div>
-  )
-
-  const iconButtonClassName = cn(
-    'text-primary/70 hover:text-primary',
-    isPrompterDarkMode ? 'text-white/70 hover:text-white' : 'text-primary/70 hover:text-primary'
-  );
+  const prompterContent = <PrompterView onPanelClick={handlePanelClick} />;
 
   return (
     <main 
@@ -172,16 +64,15 @@ export default function PrompterPanel() {
         "relative flex-1 p-4 bg-background",
         isPrompterFullscreen && 'h-dvh w-dvw p-8'
       )}
-      onClick={handlePanelClick}
     >
       {prompterContent}
+      
        {isAssistModeOn && (
         <AssistWindow onClose={() => setIsAssistModeOn(false)}>
-          <div className="h-dvh w-dvw">
-            {prompterContent}
-          </div>
+            <PrompterView isAssistMode={true} />
         </AssistWindow>
       )}
+      
       <div className="absolute bottom-4 right-4 flex flex-col gap-2">
         <IconButton
           tooltip="Rewind to Top"
@@ -189,30 +80,18 @@ export default function PrompterPanel() {
             e.stopPropagation();
             handleRewind();
           }}
-          className={iconButtonClassName}
+          className="text-primary/70 hover:text-primary"
         >
           <Rewind className="h-5 w-5" />
         </IconButton>
         <Popover open={isBrightnessPopoverOpen} onOpenChange={setIsBrightnessPopoverOpen}>
           <PopoverTrigger asChild>
-            <div
-              onPointerDown={handlePointerDown}
-              onPointerUp={handlePointerUp}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-              role="button"
-              aria-label="Brightness and color mode control"
-              className="contents"
-            >
               <IconButton
                 tooltip="Click: Toggle Dark Mode, Long-press: Brightness"
-                className={iconButtonClassName}
+                className="text-primary/70 hover:text-primary"
               >
                 <Contrast className="h-5 w-5" />
               </IconButton>
-            </div>
           </PopoverTrigger>
           <PopoverContent 
             side="left" 
@@ -221,22 +100,9 @@ export default function PrompterPanel() {
             onOpenAutoFocus={(e) => e.preventDefault()}
             onClick={(e) => e.stopPropagation()}
              onInteractOutside={(e) => {
-              if (e.target !== prompterRef.current) {
                 e.preventDefault();
-              }
             }}
           >
-            <div className="h-32">
-              <Slider
-                value={[prompterTextBrightness]}
-                onValueChange={(value) => setPrompterTextBrightness(value[0])}
-                min={20}
-                max={100}
-                step={5}
-                orientation="vertical"
-                className="[&>span]:bg-white/20 [&>span>span]:bg-white"
-              />
-            </div>
           </PopoverContent>
         </Popover>
         <IconButton
@@ -245,7 +111,7 @@ export default function PrompterPanel() {
             e.stopPropagation();
             setIsFlippedHorizontal(!isFlippedHorizontal);
           }}
-          className={iconButtonClassName}
+          className="text-primary/70 hover:text-primary"
         >
           <FlipHorizontal className="h-5 w-5" />
         </IconButton>
@@ -255,7 +121,7 @@ export default function PrompterPanel() {
             e.stopPropagation();
             setIsFlippedVertical(!isFlippedVertical);
           }}
-          className={iconButtonClassName}
+          className="text-primary/70 hover:text-primary"
         >
           <FlipVertical className="h-5 w-5" />
         </IconButton>
@@ -265,7 +131,7 @@ export default function PrompterPanel() {
             e.stopPropagation();
             handleAssistModeToggle();
           }}
-          className={cn(iconButtonClassName, isAssistModeOn && 'bg-accent text-accent-foreground')}
+          className={cn("text-primary/70 hover:text-primary", isAssistModeOn && 'bg-accent text-accent-foreground')}
         >
           <ScreenShare className="h-5 w-5" />
         </IconButton>
@@ -275,7 +141,7 @@ export default function PrompterPanel() {
             e.stopPropagation();
             setIsPrompterFullscreen(!isPrompterFullscreen)}
           }
-           className={iconButtonClassName}
+           className="text-primary/70 hover:text-primary"
         >
           {isPrompterFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
         </IconButton>
