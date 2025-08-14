@@ -71,8 +71,8 @@ export default function PrompterPanel() {
   }, [activeLine]);
   
   const handlePanelClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    // Only toggle play/pause if the click is on the background, not on buttons
-    if ((e.target as HTMLElement).closest('button')) {
+    // Only toggle play/pause if the click is on the background, not on buttons or popovers
+    if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('[role="dialog"]')) {
       return;
     }
     setIsPlaying(!isPlaying);
@@ -176,6 +176,8 @@ export default function PrompterPanel() {
                 e.preventDefault();
                 e.stopPropagation();
               }}
+              role="button"
+              aria-label="Brightness and color mode control"
             >
               <IconButton
                 tooltip="Click: Toggle Dark Mode, Long-press: Brightness"
