@@ -22,7 +22,7 @@ import AuthButton from '@/components/q/auth-button';
 import { useVoiceControl } from '@/hooks/use-voice-control';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '../ui/button';
-import { IconButton } from '../ui/icon-button';
+import { IconButton } from '../ui/button';
 import { cn } from '@/lib/utils';
 import {
   Tooltip,
@@ -185,7 +185,7 @@ export default function ControlsPanel() {
                         <Settings2 className="h-5 w-5" />
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-64 p-2" align="start">
+                <PopoverContent className="w-64 p-1" align="start">
                     <div className="flex flex-col gap-1">
                         {audioDevices.length > 0 ? (
                             audioDevices.map(device => (

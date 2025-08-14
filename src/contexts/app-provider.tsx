@@ -6,9 +6,7 @@ import type { ReactNode } from 'react';
 import React, { createContext, useState, useMemo } from 'react';
 import type { IntelligentScriptIndexingOutput } from '@/ai/flows/intelligent-script-indexing';
 
-const initialScript = `Welcome to Q_, your AI-powered teleprompter.
-
-This is a sample script to demonstrate the functionality. You can edit this text directly in the script editor panel on the left.
+const initialScript = `This is a sample script to demonstrate the functionality. You can edit this text directly in the script editor panel on the left.
 
 Use the controls on the right to adjust font size, margins, and scrolling speed.
 
@@ -53,6 +51,8 @@ interface AppContextType {
   setIsFlippedVertical: (flipped: boolean) => void;
   isFlippedHorizontal: boolean;
   setIsFlippedHorizontal: (flipped: boolean) => void;
+  isAssistModeOn: boolean;
+  setIsAssistModeOn: (assistMode: boolean) => void;
 }
 
 export const AppContext = createContext<AppContextType | null>(null);
@@ -76,6 +76,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [prompterTextBrightness, setPrompterTextBrightness] = useState<number>(100);
   const [isFlippedVertical, setIsFlippedVertical] = useState<boolean>(false);
   const [isFlippedHorizontal, setIsFlippedHorizontal] = useState<boolean>(false);
+  const [isAssistModeOn, setIsAssistModeOn] = useState<boolean>(false);
+
 
   const contextValue = useMemo(
     () => ({
@@ -113,6 +115,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setIsFlippedVertical,
       isFlippedHorizontal,
       setIsFlippedHorizontal,
+      isAssistModeOn,
+      setIsAssistModeOn,
     }),
     [
       script,
@@ -132,6 +136,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       prompterTextBrightness,
       isFlippedVertical,
       isFlippedHorizontal,
+      isAssistModeOn,
     ]
   );
 

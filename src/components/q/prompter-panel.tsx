@@ -3,7 +3,7 @@
 
 import type { ComponentProps } from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { Maximize, Minimize, Contrast, FlipVertical, FlipHorizontal, Rewind } from 'lucide-react';
+import { Maximize, Minimize, Contrast, FlipVertical, FlipHorizontal, Rewind, ScreenShare } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { cn } from '@/lib/utils';
 import {
@@ -14,11 +14,13 @@ import {
 import { Slider } from '../ui/slider';
 import { useToast } from '@/hooks/use-toast';
 import { IconButton } from '../ui/button';
+import { Textarea } from '../ui/textarea';
 
 
 export default function PrompterPanel() {
   const { 
     script, 
+    setScript,
     fontSize, 
     horizontalMargin, 
     verticalMargin,
@@ -37,13 +39,16 @@ export default function PrompterPanel() {
     setIsFlippedVertical,
     isFlippedHorizontal,
     setIsFlippedHorizontal,
+    isAssistModeOn,
+    setIsAssistModeOn,
   } = useApp();
   const prompterRef = useRef<HTMLDivElement>(null);
   const lineRefs = useRef<(HTMLParagraphElement | null)[]>([]);
   const longPressTimer = useRef<NodeJS.Timeout>();
   const [isBrightnessPopoverOpen, setIsBrightnessPopoverOpen] = useState(false);
   const { toast } = useToast();
-  
+  const assistWindowRef = useRef<Window | null>(null);
+
   const scriptLines = script.split('\n');
 
   useEffect(() => {
@@ -74,7 +79,7 @@ export default function PrompterPanel() {
   
   const handlePanelClick = (e: React.MouseEvent<HTMLDivElement>) => {
     // Only toggle play/pause if the click is on the background, not on buttons or popovers
-    if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('[data-radix-popper-content-wrapper]')) {
+    if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('[data-radix-popper-content-wrapper]') || (e.target as HTMLElement).closest('textarea')) {
       return;
     }
     setIsPlaying(!isPlaying);
@@ -106,6 +111,83 @@ export default function PrompterPanel() {
     });
   };
 
+  const handleAssistModeToggle = () => {
+    setIsAssistModeOn(!isAssistModeOn);
+  };
+
+  useEffect(() => {
+    if (isAssistModeOn) {
+      const prompterNode = prompterRef.current;
+      if (prompterNode) {
+        const newWindow = window.open('', '_blank', 'width=800,height=600,scrollbars=no,toolbar=no,location=no');
+        if (newWindow) {
+          assistWindowRef.current = newWindow;
+          const newDocument = newWindow.document;
+          newDocument.title = "Q_ Assist Mode";
+          newDocument.body.style.margin = '0';
+          newDocument.body.style.overflow = 'hidden';
+          newDocument.body.innerHTML = prompterNode.outerHTML;
+
+          // Copy styles
+          const stylesheets = Array.from(document.styleSheets);
+          stylesheets.forEach(stylesheet => {
+            if (stylesheet.href) {
+              const link = newDocument.createElement('link');
+              link.rel = 'stylesheet';
+              link.href = stylesheet.href;
+              newDocument.head.appendChild(link);
+            } else if (stylesheet.cssRules) {
+                try {
+                  const style = newDocument.createElement('style');
+                  Array.from(stylesheet.cssRules).forEach(rule => {
+                    style.appendChild(newDocument.createTextNode(rule.cssText));
+                  });
+                  newDocument.head.appendChild(style);
+                } catch (e) {
+                    console.warn('Could not copy some CSS rules:', e);
+                }
+            }
+          });
+          
+          const prompterMirror = newDocument.getElementById(prompterNode.id);
+          if (prompterMirror) {
+            prompterMirror.style.width = '100vw';
+            prompterMirror.style.height = '100vh';
+          }
+        }
+      }
+    } else {
+      if (assistWindowRef.current && !assistWindowRef.current.closed) {
+        assistWindowRef.current.close();
+        assistWindowRef.current = null;
+      }
+    }
+
+    return () => {
+        if (assistWindowRef.current && !assistWindowRef.current.closed) {
+            assistWindowRef.current.close();
+        }
+    }
+  }, [isAssistModeOn]);
+
+  useEffect(() => {
+    if (isAssistModeOn && assistWindowRef.current && !assistWindowRef.current.closed) {
+      const prompterNode = prompterRef.current;
+      if (prompterNode) {
+        const prompterMirror = assistWindowRef.current.document.getElementById(prompterNode.id);
+        if (prompterMirror) {
+            prompterMirror.innerHTML = prompterNode.innerHTML;
+            prompterMirror.className = prompterNode.className;
+            prompterMirror.style.cssText = prompterNode.style.cssText;
+            prompterMirror.scrollTop = prompterNode.scrollTop;
+            assistWindowRef.current.document.body.style.backgroundColor = isPrompterDarkMode ? 'black' : 'hsl(var(--background))';
+
+        }
+      }
+    }
+  }, [script, fontSize, horizontalMargin, verticalMargin, isPlaying, scrollSpeed, activeLine, isPrompterDarkMode, prompterTextBrightness, isFlippedVertical, isFlippedHorizontal, isPrompterFullscreen]);
+
+
   const iconButtonClassName = cn(
     'text-primary/70 hover:text-primary',
     isPrompterDarkMode ? 'text-white/70 hover:text-white' : 'text-primary/70 hover:text-primary'
@@ -121,9 +203,10 @@ export default function PrompterPanel() {
       onClick={handlePanelClick}
     >
       <div
+        id="prompter-main-view"
         ref={prompterRef}
         className={cn(
-          "h-full cursor-pointer overflow-y-scroll rounded-md border scroll-smooth text-center",
+          "h-full overflow-y-scroll rounded-md border scroll-smooth text-center",
           isPrompterDarkMode ? 'bg-black' : 'bg-background',
         )}
         style={{
@@ -141,25 +224,22 @@ export default function PrompterPanel() {
             <div
               className={cn(isFlippedHorizontal && 'transform-gpu scale-x-[-1]')}
             >
-            {scriptLines.map((line, index) => (
-                <p
-                key={index}
-                ref={(el) => (lineRefs.current[index] = el)}
-                className={cn(
-                    'transition-colors duration-300',
-                     isPrompterDarkMode ? 'text-white/70' : 'text-primary',
-                )}
-                style={{
-                    fontSize: `${fontSize}px`,
-                    lineHeight: 1.5,
-                    marginBottom: `${fontSize * 0.5}px`,
-                    filter: isPrompterDarkMode ? `brightness(${prompterTextBrightness}%)` : 'none',
-                    color: activeLine === index + 1 ? 'hsl(var(--accent))' : undefined,
-                }}
-                >
-                {line || '\u00A0'}{/* Non-breaking space for empty lines */}
-                </p>
-            ))}
+            <Textarea
+              value={script}
+              onChange={(e) => setScript(e.target.value)}
+              className={cn(
+                'w-full resize-none border-0 bg-transparent text-center focus-visible:ring-0 focus-visible:ring-offset-0',
+                isPrompterDarkMode ? 'text-white/70 placeholder:text-white/40' : 'text-primary placeholder:text-primary/40'
+              )}
+              style={{
+                fontSize: `${fontSize}px`,
+                lineHeight: 1.5,
+                color: activeLine !== null ? 'hsl(var(--accent))' : undefined,
+                filter: isPrompterDarkMode ? `brightness(${prompterTextBrightness}%)` : 'none',
+                minHeight: '100%',
+              }}
+              placeholder="Your script will appear here..."
+            />
             </div>
         </div>
       </div>
@@ -239,6 +319,16 @@ export default function PrompterPanel() {
           className={iconButtonClassName}
         >
           <FlipVertical className="h-5 w-5" />
+        </IconButton>
+        <IconButton
+          tooltip="Assist Mode"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleAssistModeToggle();
+          }}
+          className={cn(iconButtonClassName, isAssistModeOn && 'bg-accent text-accent-foreground')}
+        >
+          <ScreenShare className="h-5 w-5" />
         </IconButton>
         <IconButton
           tooltip={isPrompterFullscreen ? "Exit Fullscreen" : "Fullscreen"}
