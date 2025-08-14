@@ -99,38 +99,38 @@ export default function ControlsPanel() {
             onClick={() => fileInputRef.current?.click()}
           >
             <FileUp className="mr-2 h-4 w-4" />
-            Import Script...
+            Import Script
           </Button>
           <AuthButton />
         </div>
 
-        <div className="my-6 flex justify-center gap-4">
-          <IconButton
-            tooltip={isPlaying ? 'Pause' : 'Play'}
-            onClick={() => setIsPlaying(!isPlaying)}
-            className="h-16 w-16 bg-primary/10 text-primary hover:bg-primary/20"
-            size="lg"
+        <div className="my-6 flex items-center justify-center rounded-md border">
+            <Button
+              onClick={() => setIsPlaying(!isPlaying)}
+              variant="ghost"
+              className="h-16 flex-1 justify-center rounded-r-none border-r text-lg"
             >
-            {isPlaying ? (
-              <Pause className="h-8 w-8" />
-            ) : (
-              <Play className="h-8 w-8" />
-            )}
-          </IconButton>
-          <IconButton
-            tooltip={isListening ? 'Stop Listening' : 'Use Voice Commands'}
-            onClick={handleListenToggle}
-            size="lg"
-            className={`h-16 w-16 text-foreground ${
-              isListening ? 'bg-destructive/80 text-destructive-foreground hover:bg-destructive' : 'bg-secondary hover:bg-accent/50'
-            }`}
-          >
-            {isListening ? (
-              <MicOff className="h-8 w-8" />
-            ) : (
-              <Mic className="h-8 w-8" />
-            )}
-          </IconButton>
+              {isPlaying ? (
+                <Pause className="mr-2 h-6 w-6" />
+              ) : (
+                <Play className="mr-2 h-6 w-6" />
+              )}
+              {isPlaying ? 'Pause' : 'Play'}
+            </Button>
+            <IconButton
+              tooltip={isListening ? 'Stop Listening' : 'Use Voice Commands'}
+              onClick={handleListenToggle}
+              className={cn(
+                'h-16 w-16 rounded-l-none',
+                 isListening ? 'bg-destructive/80 text-destructive-foreground hover:bg-destructive' : 'bg-secondary hover:bg-accent/50'
+              )}
+            >
+              {isListening ? (
+                <MicOff className="h-8 w-8" />
+              ) : (
+                <Mic className="h-8 w-8" />
+              )}
+            </IconButton>
         </div>
 
         <div className="flex flex-1 flex-col gap-8 px-2">
