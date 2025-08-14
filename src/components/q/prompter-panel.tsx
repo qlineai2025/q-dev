@@ -12,7 +12,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Slider } from '../ui/slider';
-import { Button } from '@/components/ui/button';
 
 export default function PrompterPanel() {
   const { 
@@ -76,13 +75,11 @@ export default function PrompterPanel() {
   
   const handleContrastInteraction = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
-    if (e.type === 'click') {
-      if (isLongPress.current) {
+    if (isLongPress.current) {
         isLongPress.current = false;
         return;
-      }
-      setIsPrompterDarkMode(!isPrompterDarkMode);
     }
+    setIsPrompterDarkMode(!isPrompterDarkMode);
   };
   
   const handlePointerDown = (e: React.MouseEvent | React.TouchEvent) => {
