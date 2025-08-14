@@ -148,7 +148,7 @@ export default function ControlsPanel() {
         const newSessionId = Date.now().toString();
         setSessionId(newSessionId);
         setIsAssistModeOn(true);
-        const assistUrl = `/assist/${newSessionId}`;
+        const assistUrl = `${window.location.origin}/assist/${newSessionId}`;
         const newWindow = window.open(assistUrl, '_blank', 'noopener,noreferrer');
         assistWindowRef.current = newWindow;
         
@@ -342,5 +342,7 @@ function ControlSlider({ label, icon, value, orientation = "horizontal", ...prop
     </div>
   );
 }
+
+    
 
     
