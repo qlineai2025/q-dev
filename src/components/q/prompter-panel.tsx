@@ -156,7 +156,17 @@ export default function PrompterPanel() {
         </div>
       </div>
       <div className="absolute bottom-4 right-4 flex flex-col gap-2">
-      <Popover open={isBrightnessPopoverOpen} onOpenChange={setIsBrightnessPopoverOpen}>
+        <IconButton
+          tooltip="Rewind to Top"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleRewind();
+          }}
+          className={cn(isPrompterDarkMode && 'text-white hover:text-white bg-transparent hover:bg-white/10')}
+        >
+          <Rewind className="h-5 w-5" />
+        </IconButton>
+        <Popover open={isBrightnessPopoverOpen} onOpenChange={setIsBrightnessPopoverOpen}>
           <PopoverTrigger asChild>
             <div
               onPointerDown={handlePointerDown}
@@ -196,16 +206,6 @@ export default function PrompterPanel() {
             </div>
           </PopoverContent>
         </Popover>
-        <IconButton
-          tooltip="Rewind to Top"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleRewind();
-          }}
-          className={cn(isPrompterDarkMode && 'text-white hover:text-white bg-transparent hover:bg-white/10')}
-        >
-          <Rewind className="h-5 w-5" />
-        </IconButton>
         <IconButton
           tooltip="Flip Horizontal"
           onClick={(e) => {
