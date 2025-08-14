@@ -12,7 +12,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Slider } from '../ui/slider';
-import { Label } from '../ui/label';
 import { Button } from '@/components/ui/button';
 
 export default function PrompterPanel() {
@@ -120,6 +119,7 @@ export default function PrompterPanel() {
         style={{
           paddingLeft: `${horizontalMargin}%`,
           paddingRight: `${horizontalMargin}%`,
+          filter: !isPrompterDarkMode ? `brightness(${prompterTextBrightness}%)` : 'none',
         }}
       >
         <div className="flex min-h-full flex-col justify-center">
@@ -139,7 +139,7 @@ export default function PrompterPanel() {
                     fontSize: `${fontSize}px`,
                     lineHeight: 1.5,
                     marginBottom: `${fontSize * 0.5}px`,
-                    filter: `brightness(${prompterTextBrightness}%)`,
+                    filter: isPrompterDarkMode ? `brightness(${prompterTextBrightness}%)` : 'none',
                     color: activeLine === index + 1 ? 'hsl(var(--accent))' : undefined,
                 }}
                 >
