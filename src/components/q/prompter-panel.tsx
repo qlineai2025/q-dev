@@ -162,28 +162,32 @@ export default function PrompterPanel() {
             e.stopPropagation();
             handleRewind();
           }}
-          className={cn(isPrompterDarkMode && 'text-white/70 hover:text-white bg-black/20 hover:bg-white/10')}
+          className={cn('text-white/70 hover:text-white bg-black/20 hover:bg-white/10')}
         >
           <Rewind className="h-5 w-5" />
         </IconButton>
         <Popover open={isBrightnessPopoverOpen} onOpenChange={setIsBrightnessPopoverOpen}>
           <PopoverTrigger asChild>
-            <IconButton
-              tooltip="Click: Toggle Dark Mode, Long-press: Brightness"
-              className={cn(isPrompterDarkMode && 'text-white/70 hover:text-white bg-black/20 hover:bg-white/10')}
+            <div
               onPointerDown={handlePointerDown}
               onPointerUp={handlePointerUp}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
               }}
+              className="contents"
             >
-              <Contrast className="h-5 w-5" />
-            </IconButton>
+              <IconButton
+                tooltip="Click: Toggle Dark Mode, Long-press: Brightness"
+                className={cn('text-white/70 hover:text-white bg-black/20 hover:bg-white/10')}
+              >
+                <Contrast className="h-5 w-5" />
+              </IconButton>
+            </div>
           </PopoverTrigger>
           <PopoverContent 
-            side="top" 
-            align="end" 
+            side="left" 
+            align="center" 
             className="w-auto border-none bg-transparent shadow-none p-4"
             onOpenAutoFocus={(e) => e.preventDefault()}
             onClick={(e) => e.stopPropagation()}
@@ -207,7 +211,7 @@ export default function PrompterPanel() {
             e.stopPropagation();
             setIsFlippedHorizontal(!isFlippedHorizontal);
           }}
-          className={cn(isPrompterDarkMode && 'text-white/70 hover:text-white bg-black/20 hover:bg-white/10')}
+          className={cn('text-white/70 hover:text-white bg-black/20 hover:bg-white/10')}
         >
           <FlipHorizontal className="h-5 w-5" />
         </IconButton>
@@ -217,7 +221,7 @@ export default function PrompterPanel() {
             e.stopPropagation();
             setIsFlippedVertical(!isFlippedVertical);
           }}
-          className={cn(isPrompterDarkMode && 'text-white/70 hover:text-white bg-black/20 hover:bg-white/10')}
+          className={cn('text-white/70 hover:text-white bg-black/20 hover:bg-white/10')}
         >
           <FlipVertical className="h-5 w-5" />
         </IconButton>
@@ -227,7 +231,7 @@ export default function PrompterPanel() {
             e.stopPropagation();
             setIsPrompterFullscreen(!isPrompterFullscreen)}
           }
-           className={cn(isPrompterDarkMode && 'text-white/70 hover:text-white bg-black/20 hover:bg-white/10')}
+           className={cn('text-white/70 hover:text-white bg-black/20 hover:bg-white/10')}
         >
           {isPrompterFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
         </IconButton>
