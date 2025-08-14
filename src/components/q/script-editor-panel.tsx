@@ -1,7 +1,7 @@
 
 "use client";
 
-import { Bot, Loader2 } from 'lucide-react';
+import { Bot, Loader2, ChevronsUpDown } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { Textarea } from '@/components/ui/textarea';
 import { intelligentScriptIndexing } from '@/ai/flows/intelligent-script-indexing';
@@ -9,7 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import IconButton from './icon-button';
 
 export default function ScriptEditorPanel() {
-  const { script, setScript, setIndexedScript, isLoadingIndex, setIsLoadingIndex, activeLine } = useApp();
+  const { script, setScript, setIndexedScript, isLoadingIndex, setIsLoadingIndex, isScriptEditorExpanded, setIsScriptEditorExpanded } = useApp();
   const { toast } = useToast();
 
   const handleIndexScript = async () => {
@@ -43,7 +43,13 @@ export default function ScriptEditorPanel() {
 
   return (
     <aside className="relative h-full w-full flex-col border-border bg-card shadow-lg lg:border-t">
-       <div className="absolute right-2 top-2 z-10">
+       <div className="absolute right-2 top-2 z-10 flex gap-2">
+          <IconButton 
+            tooltip={isScriptEditorExpanded ? "Collapse" : "Expand"} 
+            onClick={() => setIsScriptEditorExpanded(!isScriptEditorExpanded)}
+            >
+             <ChevronsUpDown className="h-5 w-5" />
+          </IconButton>
           <IconButton tooltip="Index with AI" onClick={handleIndexScript} disabled={isLoadingIndex || !script.trim()}>
             {isLoadingIndex ? (
               <Loader2 className="h-5 w-5 animate-spin" />

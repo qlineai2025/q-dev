@@ -42,6 +42,8 @@ interface AppContextType {
   setIsListening: (listening: boolean) => void;
   activeLine: number | null;
   setActiveLine: (line: number | null) => void;
+  isScriptEditorExpanded: boolean;
+  setIsScriptEditorExpanded: (expanded: boolean) => void;
 }
 
 export const AppContext = createContext<AppContextType | null>(null);
@@ -59,6 +61,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     useState<IntelligentScriptIndexingOutput | null>(null);
   const [isLoadingIndex, setIsLoadingIndex] = useState<boolean>(false);
   const [activeLine, setActiveLine] = useState<number | null>(null);
+  const [isScriptEditorExpanded, setIsScriptEditorExpanded] = useState<boolean>(true);
 
   const contextValue = useMemo(
     () => ({
@@ -84,6 +87,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setIsListening,
       activeLine,
       setActiveLine,
+      isScriptEditorExpanded,
+      setIsScriptEditorExpanded,
     }),
     [
       script,
@@ -97,6 +102,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       isLoadingIndex,
       isListening,
       activeLine,
+      isScriptEditorExpanded,
     ]
   );
 
