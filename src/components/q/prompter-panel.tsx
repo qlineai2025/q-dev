@@ -124,7 +124,7 @@ export default function PrompterPanel() {
                 key={index}
                 ref={(el) => (lineRefs.current[index] = el)}
                 className={cn(
-                    'transition-colors duration-300',
+                    'transition-colors duration-300 text-center',
                      isPrompterDarkMode ? 'text-white' : 'text-primary',
                      isFlippedVertical && 'transform-gpu scale-y-[-1]'
                 )}
