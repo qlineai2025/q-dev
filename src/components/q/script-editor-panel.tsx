@@ -42,7 +42,7 @@ export default function ScriptEditorPanel() {
   };
 
   return (
-    <aside className="relative h-[40vh] w-full flex-col border-border bg-card shadow-lg lg:h-auto lg:border-t">
+    <aside className="relative h-[80vh] w-full flex-col border-border bg-card shadow-lg lg:h-auto lg:border-t">
        <div className="absolute right-2 top-2 z-10">
           <IconButton tooltip="Index with AI" onClick={handleIndexScript} disabled={isLoadingIndex || !script.trim()}>
             {isLoadingIndex ? (

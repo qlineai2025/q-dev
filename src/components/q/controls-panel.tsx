@@ -116,7 +116,7 @@ export default function ControlsPanel() {
             <Button
               onClick={() => setIsPlaying(!isPlaying)}
               variant="ghost"
-              className="flex-1 justify-center rounded-r-none border-r"
+              className="flex-1 justify-start rounded-r-none border-r"
             >
               {isPlaying ? (
                 <Pause className="mr-2 h-4 w-4" />
@@ -209,7 +209,7 @@ function ControlSlider({ label, icon, value, orientation = "horizontal", ...prop
           <TooltipTrigger asChild>
               <div className={cn(
                 "flex items-center gap-2 text-sm font-medium text-muted-foreground",
-                orientation === 'vertical' ? 'flex-col-reverse h-full' : ''
+                orientation === 'vertical' ? 'flex-col h-full' : ''
               )}>
                 {icon}
                 <Slider 
