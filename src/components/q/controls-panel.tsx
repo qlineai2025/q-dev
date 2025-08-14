@@ -14,6 +14,7 @@ import {
   Timer,
   FileUp,
   Settings2,
+  Check,
 } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { Slider } from '@/components/ui/slider';
@@ -34,14 +35,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Label } from '../ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select';
 
 export default function ControlsPanel() {
   const {
@@ -126,6 +119,15 @@ export default function ControlsPanel() {
     }
     setIsAudioSettingsOpen(!isAudioSettingsOpen);
   };
+  
+  const handleDeviceSelect = (deviceId: string) => {
+    setAudioDeviceId(deviceId);
+    setIsAudioSettingsOpen(false);
+    toast({
+        title: "Audio Device Changed",
+        description: "Your microphone has been updated.",
+    });
+  }
 
   return (
     <aside className="w-full border-border bg-background p-4 shadow-lg lg:h-full lg:w-[200px] lg:border-r">
@@ -183,26 +185,28 @@ export default function ControlsPanel() {
                         <Settings2 className="h-5 w-5" />
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-64" align="start">
-                  {audioDevices.length > 0 ? (
-                    <Select
-                        value={audioDeviceId ?? ''}
-                        onValueChange={setAudioDeviceId}
-                    >
-                        <SelectTrigger id="audio-input" className="w-full">
-                            <SelectValue placeholder="Select a device" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {audioDevices.map(device => (
-                                <SelectItem key={device.deviceId} value={device.deviceId}>
-                                    {device.label || `Microphone ${audioDevices.indexOf(device) + 1}`}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                  ) : (
-                     <p className="text-sm text-muted-foreground">No audio devices found.</p>
-                  )}
+                <PopoverContent className="w-64 p-2" align="start">
+                    <div className="flex flex-col gap-1">
+                        {audioDevices.length > 0 ? (
+                            audioDevices.map(device => (
+                                <Button
+                                    key={device.deviceId}
+                                    variant="ghost"
+                                    className="w-full justify-start gap-2"
+                                    onClick={() => handleDeviceSelect(device.deviceId)}
+                                >
+                                    <div className="w-4">
+                                        {audioDeviceId === device.deviceId && <Check className="h-4 w-4" />}
+                                    </div>
+                                    <span className="truncate flex-1 text-left">
+                                        {device.label || `Microphone ${audioDevices.indexOf(device) + 1}`}
+                                    </span>
+                                </Button>
+                            ))
+                        ) : (
+                            <p className="p-2 text-sm text-muted-foreground">No audio devices found.</p>
+                        )}
+                    </div>
                 </PopoverContent>
             </Popover>
         </div>
