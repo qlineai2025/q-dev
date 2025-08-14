@@ -29,6 +29,8 @@ interface AppContextType {
   setScrollSpeed: (speed: number) => void;
   horizontalMargin: number;
   setHorizontalMargin: (margin: number) => void;
+  verticalMargin: number;
+  setVerticalMargin: (margin: number) => void;
   isPlaying: boolean;
   setIsPlaying: (playing: boolean) => void;
   user: User | null;
@@ -60,6 +62,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [fontSize, setFontSize] = useState<number>(64);
   const [scrollSpeed, setScrollSpeed] = useState<number>(50);
   const [horizontalMargin, setHorizontalMargin] = useState<number>(10);
+  const [verticalMargin, setVerticalMargin] = useState<number>(50);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isListening, setIsListening] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
@@ -83,6 +86,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setScrollSpeed,
       horizontalMargin,
       setHorizontalMargin,
+      verticalMargin,
+      setVerticalMargin,
       isPlaying,
       setIsPlaying,
       user,
@@ -111,6 +116,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       fontSize,
       scrollSpeed,
       horizontalMargin,
+      verticalMargin,
       isPlaying,
       user,
       indexedScript,

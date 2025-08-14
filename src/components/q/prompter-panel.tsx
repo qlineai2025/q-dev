@@ -18,6 +18,7 @@ export default function PrompterPanel() {
     script, 
     fontSize, 
     horizontalMargin, 
+    verticalMargin,
     isPlaying, 
     setIsPlaying, 
     scrollSpeed, 
@@ -109,13 +110,13 @@ export default function PrompterPanel() {
         style={{
           paddingLeft: `${horizontalMargin}%`,
           paddingRight: `${horizontalMargin}%`,
+          paddingTop: `${verticalMargin}vh`,
           filter: !isPrompterDarkMode ? `brightness(${prompterTextBrightness}%)` : 'none',
         }}
       >
         <div className="flex min-h-full flex-col">
             <div
               className={cn(isFlipped && 'transform-gpu scale-y-[-1]')}
-              style={{ paddingTop: '50vh' }}
             >
             {scriptLines.map((line, index) => (
                 <p
