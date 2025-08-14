@@ -51,8 +51,10 @@ interface AppContextType {
   setIsPrompterFullscreen: (fullscreen: boolean) => void;
   prompterTextBrightness: number;
   setPrompterTextBrightness: (brightness: number) => void;
-  isFlipped: boolean;
-  setIsFlipped: (flipped: boolean) => void;
+  isFlippedVertical: boolean;
+  setIsFlippedVertical: (flipped: boolean) => void;
+  isFlippedHorizontal: boolean;
+  setIsFlippedHorizontal: (flipped: boolean) => void;
 }
 
 export const AppContext = createContext<AppContextType | null>(null);
@@ -74,7 +76,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [isPrompterDarkMode, setIsPrompterDarkMode] = useState<boolean>(true);
   const [isPrompterFullscreen, setIsPrompterFullscreen] = useState<boolean>(false);
   const [prompterTextBrightness, setPrompterTextBrightness] = useState<number>(100);
-  const [isFlipped, setIsFlipped] = useState<boolean>(false);
+  const [isFlippedVertical, setIsFlippedVertical] = useState<boolean>(false);
+  const [isFlippedHorizontal, setIsFlippedHorizontal] = useState<boolean>(false);
 
   const contextValue = useMemo(
     () => ({
@@ -108,8 +111,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setIsPrompterFullscreen,
       prompterTextBrightness,
       setPrompterTextBrightness,
-      isFlipped,
-      setIsFlipped,
+      isFlippedVertical,
+      setIsFlippedVertical,
+      isFlippedHorizontal,
+      setIsFlippedHorizontal,
     }),
     [
       script,
@@ -127,7 +132,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       isPrompterDarkMode,
       isPrompterFullscreen,
       prompterTextBrightness,
-      isFlipped,
+      isFlippedVertical,
+      isFlippedHorizontal,
     ]
   );
 

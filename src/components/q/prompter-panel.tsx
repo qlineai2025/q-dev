@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from 'react';
-import { Maximize, Minimize, Contrast, FlipVertical } from 'lucide-react';
+import { Maximize, Minimize, Contrast, FlipVertical, FlipHorizontal } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { cn } from '@/lib/utils';
 import IconButton from './icon-button';
@@ -29,8 +29,10 @@ export default function PrompterPanel() {
     setIsPrompterFullscreen,
     prompterTextBrightness,
     setPrompterTextBrightness,
-    isFlipped,
-    setIsFlipped
+    isFlippedVertical,
+    setIsFlippedVertical,
+    isFlippedHorizontal,
+    setIsFlippedHorizontal,
   } = useApp();
   const prompterRef = useRef<HTMLDivElement>(null);
   const lineRefs = useRef<(HTMLParagraphElement | null)[]>([]);
@@ -72,12 +74,12 @@ export default function PrompterPanel() {
     }
     setIsPlaying(!isPlaying);
   };
-
+  
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     e.stopPropagation();
     longPressTimer.current = setTimeout(() => {
       setIsBrightnessPopoverOpen(true);
-      longPressTimer.current = undefined; // Clear timer ref after it has run
+      longPressTimer.current = undefined;
     }, 500);
   };
   
@@ -86,10 +88,8 @@ export default function PrompterPanel() {
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
       longPressTimer.current = undefined;
-      // This was a short click, so we toggle the mode
       setIsPrompterDarkMode(prev => !prev);
     }
-    // If the timer is already cleared, it means it was a long press, so we do nothing here
   };
 
 
@@ -106,6 +106,7 @@ export default function PrompterPanel() {
         className={cn(
           "h-full cursor-pointer overflow-y-scroll rounded-md border scroll-smooth",
           isPrompterDarkMode ? 'bg-black' : 'bg-background',
+          isFlippedVertical && 'transform-gpu scale-y-[-1]'
         )}
         style={{
           paddingLeft: `${horizontalMargin}%`,
@@ -116,7 +117,7 @@ export default function PrompterPanel() {
       >
         <div className="flex min-h-full flex-col">
             <div
-              className={cn(isFlipped && 'transform-gpu scale-y-[-1]')}
+              className={cn(isFlippedHorizontal && 'transform-gpu scale-x-[-1]')}
             >
             {scriptLines.map((line, index) => (
                 <p
@@ -124,7 +125,8 @@ export default function PrompterPanel() {
                 ref={(el) => (lineRefs.current[index] = el)}
                 className={cn(
                     'transition-colors duration-300',
-                     isPrompterDarkMode ? 'text-white' : 'text-primary'
+                     isPrompterDarkMode ? 'text-white' : 'text-primary',
+                     isFlippedVertical && 'transform-gpu scale-y-[-1]'
                 )}
                 style={{
                     fontSize: `${fontSize}px`,
@@ -155,7 +157,6 @@ export default function PrompterPanel() {
               <IconButton
                 tooltip="Click: Toggle Dark Mode, Long-press: Brightness"
                 className={cn(isPrompterDarkMode && 'text-white hover:text-white bg-transparent hover:bg-white/10')}
-                // This onClick is just to satisfy IconButton's prop requirements, the real logic is in onPointerUp
                 onClick={() => {}} 
               >
                 <Contrast className="h-5 w-5" />
@@ -182,11 +183,21 @@ export default function PrompterPanel() {
             </div>
           </PopoverContent>
         </Popover>
+        <IconButton
+          tooltip="Flip Horizontal"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsFlippedHorizontal(!isFlippedHorizontal);
+          }}
+          className={cn(isPrompterDarkMode && 'text-white hover:text-white bg-transparent hover:bg-white/10')}
+        >
+          <FlipHorizontal className="h-5 w-5" />
+        </IconButton>
          <IconButton
           tooltip="Flip Vertically"
           onClick={(e) => {
             e.stopPropagation();
-            setIsFlipped(!isFlipped);
+            setIsFlippedVertical(!isFlippedVertical);
           }}
           className={cn(isPrompterDarkMode && 'text-white hover:text-white bg-transparent hover:bg-white/10')}
         >
