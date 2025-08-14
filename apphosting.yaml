@@ -12,7 +12,8 @@ env:
   # Configure environment variables.
   # See https://firebase.google.com/docs/app-hosting/configure#user-defined-environment
   - variable: NEXT_PUBLIC_FIREBASE_API_KEY
-    value: "AIzaSyDC-YU8Wr8Sq2plGVZZCvaiIcUp-qNqc_4"
+    secret: FIREBASE_NEXT_PUBLIC_API_KEY # Reference the GitHub Secret here
+  # Keep all other NEXT_PUBLIC variables as they are
   - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
     value: "q-dev-0.firebaseapp.com"
   - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
