@@ -83,6 +83,7 @@ export default function PrompterPanel() {
     e.stopPropagation();
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
+      longPressTimer.current = undefined;
       // This was a short click, so we toggle the mode
       setIsPrompterDarkMode(prev => !prev);
     }
@@ -142,11 +143,16 @@ export default function PrompterPanel() {
           <PopoverTrigger asChild>
             <IconButton
               tooltip="Click: Toggle Dark Mode, Long-press: Brightness"
-              onMouseDown={handlePointerDown}
-              onMouseUp={handlePointerUp}
-              onTouchStart={handlePointerDown}
-              onTouchEnd={handlePointerUp}
-              onClick={(e) => e.preventDefault()} // Prevent default click behavior
+              onPointerDown={handlePointerDown}
+              onPointerUp={handlePointerUp}
+              onClick={(e) => {
+                e.preventDefault();
+                if (longPressTimer.current) {
+                  clearTimeout(longPressTimer.current);
+                  longPressTimer.current = undefined;
+                  setIsPrompterDarkMode(prev => !prev);
+                }
+              }}
               className={cn(isPrompterDarkMode && 'text-white hover:text-white bg-transparent hover:bg-white/10')}
             >
               <Contrast className="h-5 w-5" />
@@ -155,18 +161,21 @@ export default function PrompterPanel() {
           <PopoverContent 
             side="top" 
             align="end" 
-            className="w-48 p-4 border-none bg-black/50 backdrop-blur-sm"
+            className="w-auto border-none bg-transparent shadow-none p-4"
             onOpenAutoFocus={(e) => e.preventDefault()}
             onClick={(e) => e.stopPropagation()}
           >
+            <div className="h-32">
               <Slider
                 value={[prompterTextBrightness]}
                 onValueChange={(value) => setPrompterTextBrightness(value[0])}
                 min={20}
                 max={100}
                 step={5}
+                orientation="vertical"
                 className="[&>span]:bg-white/20 [&>span>span]:bg-white"
               />
+            </div>
           </PopoverContent>
         </Popover>
         <IconButton
