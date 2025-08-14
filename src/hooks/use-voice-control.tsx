@@ -23,6 +23,7 @@ export const useVoiceControl = () => {
     setIsListening
   } = useApp();
   const [error, setError] = useState<string | null>(null);
+  const [audioDeviceId, setAudioDeviceId] = useState<string | undefined>(undefined);
   const recognitionRef = useRef<any | null>(null);
   const { toast } = useToast();
 
@@ -104,6 +105,21 @@ export const useVoiceControl = () => {
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
 
+    // The 'audio' constraint can be an object specifying the device ID
+    navigator.mediaDevices.getUserMedia({ audio: audioDeviceId ? { deviceId: { exact: audioDeviceId } } : true })
+      .then(stream => {
+         // Although we don't use the stream directly here, 
+         // getting it ensures permissions and device selection are handled.
+         // Some SpeechRecognition implementations might implicitly use the current default device.
+         // For more direct control, Web Audio API would be needed to pipe a specific source.
+      })
+      .catch(err => {
+        console.error("Error getting user media:", err);
+        setError(`Could not start listening. Please check microphone permissions and device selection. Error: ${err.name}`);
+        setIsListening(false);
+        return;
+      });
+
     recognition.onresult = (event: any) => {
       const command = event.results[event.results.length - 1][0].transcript;
       handleCommand(command);
@@ -123,7 +139,7 @@ export const useVoiceControl = () => {
     recognition.start();
     recognitionRef.current = recognition;
     setError(null);
-  }, [handleCommand, setIsListening]);
+  }, [handleCommand, setIsListening, audioDeviceId]);
 
   const stopListening = useCallback(() => {
     if (recognitionRef.current) {
@@ -139,5 +155,5 @@ export const useVoiceControl = () => {
     }
   }, []);
 
-  return { startListening, stopListening, error };
+  return { startListening, stopListening, error, audioDeviceId, setAudioDeviceId };
 };

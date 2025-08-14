@@ -163,7 +163,7 @@ export default function PrompterPanel() {
             e.stopPropagation();
             handleRewind();
           }}
-          className={cn('bg-black/20 hover:bg-black/50 text-white/70 hover:text-white ')}
+          className={cn('text-white/70 hover:text-white ')}
         >
           <Rewind className="h-5 w-5" />
         </IconButton>
@@ -181,7 +181,7 @@ export default function PrompterPanel() {
             >
               <IconButton
                 tooltip="Click: Toggle Dark Mode, Long-press: Brightness"
-                className={cn('bg-black/20 hover:bg-black/50 text-white/70 hover:text-white ')}
+                className={cn('text-white/70 hover:text-white ')}
               >
                 <Contrast className="h-5 w-5" />
               </IconButton>
@@ -193,6 +193,11 @@ export default function PrompterPanel() {
             className="w-auto border-none bg-transparent shadow-none p-4"
             onOpenAutoFocus={(e) => e.preventDefault()}
             onClick={(e) => e.stopPropagation()}
+            onInteractOutside={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsBrightnessPopoverOpen(false);
+            }}
           >
             <div className="h-32">
               <Slider
@@ -213,7 +218,7 @@ export default function PrompterPanel() {
             e.stopPropagation();
             setIsFlippedHorizontal(!isFlippedHorizontal);
           }}
-          className={cn('bg-black/20 hover:bg-black/50 text-white/70 hover:text-white ')}
+          className={cn('text-white/70 hover:text-white ')}
         >
           <FlipHorizontal className="h-5 w-5" />
         </IconButton>
@@ -223,7 +228,7 @@ export default function PrompterPanel() {
             e.stopPropagation();
             setIsFlippedVertical(!isFlippedVertical);
           }}
-          className={cn('bg-black/20 hover:bg-black/50 text-white/70 hover:text-white ')}
+          className={cn('text-white/70 hover:text-white ')}
         >
           <FlipVertical className="h-5 w-5" />
         </IconButton>
@@ -233,7 +238,7 @@ export default function PrompterPanel() {
             e.stopPropagation();
             setIsPrompterFullscreen(!isPrompterFullscreen)}
           }
-           className={cn('bg-black/20 hover:bg-black/50 text-white/70 hover:text-white ')}
+           className={cn('text-white/70 hover:text-white ')}
         >
           {isPrompterFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
         </IconButton>

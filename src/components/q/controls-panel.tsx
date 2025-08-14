@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Type,
   Play,
@@ -12,6 +12,7 @@ import {
   MoveVertical,
   Timer,
   FileUp,
+  Settings,
 } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { Slider } from '@/components/ui/slider';
@@ -27,6 +28,19 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Label } from '../ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select';
 
 export default function ControlsPanel() {
   const {
@@ -46,8 +60,10 @@ export default function ControlsPanel() {
   } = useApp();
 
   const { toast } = useToast();
-  const { startListening, stopListening, error } = useVoiceControl();
+  const { startListening, stopListening, error, audioDeviceId, setAudioDeviceId } = useVoiceControl();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
+  const [isAudioSettingsOpen, setIsAudioSettingsOpen] = useState(false);
 
   useEffect(() => {
     if (error) {
@@ -89,6 +105,27 @@ export default function ControlsPanel() {
     }
   };
 
+  const handleAudioSettingsClick = async () => {
+    if (!isAudioSettingsOpen) {
+      try {
+        // Request permissions and get devices
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const audioInputDevices = devices.filter(device => device.kind === 'audioinput');
+        setAudioDevices(audioInputDevices);
+      } catch (err) {
+        console.error("Error getting audio devices:", err);
+        toast({
+            variant: "destructive",
+            title: "Audio Permissions Error",
+            description: "Could not access audio devices. Please grant microphone permissions in your browser settings.",
+        });
+        return;
+      }
+    }
+    setIsAudioSettingsOpen(!isAudioSettingsOpen);
+  };
+
   return (
     <aside className="w-full border-border bg-background p-4 shadow-lg lg:h-full lg:w-[200px] lg:border-r">
       <div className="flex h-full flex-col">
@@ -111,11 +148,11 @@ export default function ControlsPanel() {
           <AuthButton />
         </div>
 
-        <div className="my-2 flex items-center justify-center rounded-md border">
+        <div className="my-2 flex items-center justify-center">
             <Button
               onClick={() => setIsPlaying(!isPlaying)}
-              variant="ghost"
-              className="flex-1 justify-start rounded-r-none border-r"
+              variant="secondary"
+              className="flex-1 justify-start rounded-r-none"
             >
               {isPlaying ? (
                 <Pause className="mr-2 h-4 w-4" />
@@ -124,12 +161,12 @@ export default function ControlsPanel() {
               )}
               {isPlaying ? 'Pause' : 'Play'}
             </Button>
-            <IconButton
-              tooltip={isListening ? 'Stop Listening' : 'Use Voice Commands'}
+            <Button
+              variant="secondary"
               onClick={handleListenToggle}
               className={cn(
-                'rounded-l-none',
-                 isListening ? 'bg-destructive/80 text-destructive-foreground hover:bg-destructive' : ''
+                 isListening ? 'bg-destructive/80 text-destructive-foreground hover:bg-destructive' : '',
+                 'rounded-none'
               )}
             >
               {isListening ? (
@@ -137,7 +174,47 @@ export default function ControlsPanel() {
               ) : (
                 <Mic className="h-5 w-5" />
               )}
-            </IconButton>
+            </Button>
+             <Popover open={isAudioSettingsOpen} onOpenChange={setIsAudioSettingsOpen}>
+                <PopoverTrigger asChild>
+                    <Button 
+                        variant="secondary" 
+                        size="icon" 
+                        className="rounded-l-none"
+                        onClick={handleAudioSettingsClick}
+                    >
+                        <Settings className="h-5 w-5" />
+                    </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-64" align="start">
+                    <div className="grid gap-4">
+                    <div className="space-y-2">
+                        <h4 className="font-medium leading-none">Audio Settings</h4>
+                        <p className="text-sm text-muted-foreground">
+                        Select your microphone input device.
+                        </p>
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="audio-input">Microphone</Label>
+                        <Select
+                            value={audioDeviceId ?? ''}
+                            onValueChange={setAudioDeviceId}
+                        >
+                            <SelectTrigger id="audio-input" className="w-full">
+                                <SelectValue placeholder="Select a device" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {audioDevices.map(device => (
+                                    <SelectItem key={device.deviceId} value={device.deviceId}>
+                                        {device.label || `Microphone ${audioDevices.indexOf(device) + 1}`}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    </div>
+                </PopoverContent>
+            </Popover>
         </div>
         <div className="flex flex-1 items-center justify-center gap-4 px-2 pt-4">
           <ControlSlider
