@@ -72,15 +72,15 @@ export default function PrompterPanel() {
     setIsPlaying(!isPlaying);
   };
 
-  const handlePointerDown = (e: React.MouseEvent | React.TouchEvent) => {
+  const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     longPressTimer.current = setTimeout(() => {
       setIsBrightnessPopoverOpen(true);
       longPressTimer.current = undefined; // Clear timer ref after it has run
     }, 500);
   };
-
-  const handlePointerUp = (e: React.MouseEvent | React.TouchEvent) => {
+  
+  const handlePointerUp = (e: React.PointerEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
@@ -112,9 +112,10 @@ export default function PrompterPanel() {
           filter: !isPrompterDarkMode ? `brightness(${prompterTextBrightness}%)` : 'none',
         }}
       >
-        <div className="flex min-h-full flex-col justify-center">
+        <div className="flex min-h-full flex-col">
             <div
               className={cn(isFlipped && 'transform-gpu scale-y-[-1]')}
+              style={{ paddingTop: '50vh' }}
             >
             {scriptLines.map((line, index) => (
                 <p
@@ -141,22 +142,24 @@ export default function PrompterPanel() {
       <div className="absolute bottom-4 right-4 flex flex-col gap-2">
       <Popover open={isBrightnessPopoverOpen} onOpenChange={setIsBrightnessPopoverOpen}>
           <PopoverTrigger asChild>
-            <IconButton
-              tooltip="Click: Toggle Dark Mode, Long-press: Brightness"
+            <button
               onPointerDown={handlePointerDown}
               onPointerUp={handlePointerUp}
               onClick={(e) => {
                 e.preventDefault();
-                if (longPressTimer.current) {
-                  clearTimeout(longPressTimer.current);
-                  longPressTimer.current = undefined;
-                  setIsPrompterDarkMode(prev => !prev);
-                }
+                e.stopPropagation();
               }}
-              className={cn(isPrompterDarkMode && 'text-white hover:text-white bg-transparent hover:bg-white/10')}
+              className="contents" // Use contents to avoid adding an extra element to the DOM
             >
-              <Contrast className="h-5 w-5" />
-            </IconButton>
+              <IconButton
+                tooltip="Click: Toggle Dark Mode, Long-press: Brightness"
+                className={cn(isPrompterDarkMode && 'text-white hover:text-white bg-transparent hover:bg-white/10')}
+                // This onClick is just to satisfy IconButton's prop requirements, the real logic is in onPointerUp
+                onClick={() => {}} 
+              >
+                <Contrast className="h-5 w-5" />
+              </IconButton>
+            </button>
           </PopoverTrigger>
           <PopoverContent 
             side="top" 
