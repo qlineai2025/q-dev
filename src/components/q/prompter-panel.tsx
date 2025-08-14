@@ -36,6 +36,7 @@ export default function PrompterPanel() {
   const lineRefs = useRef<(HTMLParagraphElement | null)[]>([]);
   const longPressTimer = useRef<NodeJS.Timeout>();
   const [isBrightnessPopoverOpen, setIsBrightnessPopoverOpen] = useState(false);
+  const isLongPress = useRef(false);
 
 
   const scriptLines = script.split('\n');
@@ -75,25 +76,27 @@ export default function PrompterPanel() {
   };
   
   const handleContrastInteraction = (e: React.MouseEvent | React.TouchEvent) => {
-    // Prevent click from propagating to the panel
     e.stopPropagation();
-  
-    // Clear any existing timer
-    if (longPressTimer.current) {
-      clearTimeout(longPressTimer.current);
-    }
-  
-    if (e.type === 'mousedown' || e.type === 'touchstart') {
-      longPressTimer.current = setTimeout(() => {
-        setIsBrightnessPopoverOpen(true);
-      }, 500); // 500ms for a long press
-    } else if (e.type === 'click') {
-        // This is a simple click, toggle dark mode
-        setIsPrompterDarkMode(!isPrompterDarkMode);
+    if (e.type === 'click') {
+      if (isLongPress.current) {
+        isLongPress.current = false;
+        return;
+      }
+      setIsPrompterDarkMode(!isPrompterDarkMode);
     }
   };
   
-  const handlePointerUp = () => {
+  const handlePointerDown = (e: React.MouseEvent | React.TouchEvent) => {
+    e.stopPropagation();
+    isLongPress.current = false;
+    longPressTimer.current = setTimeout(() => {
+      isLongPress.current = true;
+      setIsBrightnessPopoverOpen(true);
+    }, 500);
+  };
+
+  const handlePointerUp = (e: React.MouseEvent | React.TouchEvent) => {
+    e.stopPropagation();
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
     }
@@ -152,11 +155,11 @@ export default function PrompterPanel() {
             <IconButton
               tooltip="Click: Toggle Dark Mode, Long-press: Brightness"
               onClick={handleContrastInteraction}
-              onMouseDown={handleContrastInteraction}
+              onMouseDown={handlePointerDown}
               onMouseUp={handlePointerUp}
-              onTouchStart={handleContrastInteraction}
+              onTouchStart={handlePointerDown}
               onTouchEnd={handlePointerUp}
-              className={cn(isPrompterDarkMode && 'text-white hover:text-white')}
+              className={cn(isPrompterDarkMode && 'text-white hover:text-white bg-transparent hover:bg-white/10')}
             >
               <Contrast className="h-5 w-5" />
             </IconButton>
@@ -164,30 +167,18 @@ export default function PrompterPanel() {
           <PopoverContent 
             side="top" 
             align="end" 
-            className="w-48 p-4"
+            className="w-48 p-4 border-none bg-black/50 backdrop-blur-sm"
             onOpenAutoFocus={(e) => e.preventDefault()}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="space-y-4">
-              <div className='space-y-2'>
-                <Label htmlFor="brightness-slider">Brightness</Label>
-                <Slider
-                  id="brightness-slider"
-                  value={[prompterTextBrightness]}
-                  onValueChange={(value) => setPrompterTextBrightness(value[0])}
-                  min={20}
-                  max={100}
-                  step={5}
-                />
-              </div>
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => setIsPrompterDarkMode(!isPrompterDarkMode)}
-              >
-                {isPrompterDarkMode ? "Light Mode" : "Dark Mode"}
-              </Button>
-            </div>
+              <Slider
+                value={[prompterTextBrightness]}
+                onValueChange={(value) => setPrompterTextBrightness(value[0])}
+                min={20}
+                max={100}
+                step={5}
+                className="[&>span]:bg-white/20 [&>span>span]:bg-white"
+              />
           </PopoverContent>
         </Popover>
         <IconButton
@@ -196,7 +187,7 @@ export default function PrompterPanel() {
             e.stopPropagation();
             setIsPrompterFullscreen(!isPrompterFullscreen)}
           }
-           className={cn(isPrompterDarkMode && 'text-white hover:text-white')}
+           className={cn(isPrompterDarkMode && 'text-white hover:text-white bg-transparent hover:bg-white/10')}
         >
           {isPrompterFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
         </IconButton>
