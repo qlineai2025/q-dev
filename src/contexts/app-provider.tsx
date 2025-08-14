@@ -111,7 +111,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setIsPrompterFullscreen,
       prompterTextBrightness,
       setPrompterTextBrightness,
-      isFlippedVertical,
+isFlippedVertical,
       setIsFlippedVertical,
       isFlippedHorizontal,
       setIsFlippedHorizontal,

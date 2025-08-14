@@ -79,7 +79,7 @@ export default function PrompterPanel() {
   
   const handlePanelClick = (e: React.MouseEvent<HTMLDivElement>) => {
     // Only toggle play/pause if the click is on the background, not on buttons or popovers
-    if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('[data-radix-popper-content-wrapper]') || (e.target as HTMLElement).closest('textarea')) {
+    if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('[data-radix-popper-content-wrapper]')) {
       return;
     }
     setIsPlaying(!isPlaying);
@@ -126,7 +126,9 @@ export default function PrompterPanel() {
           newDocument.title = "Q_ Assist Mode";
           newDocument.body.style.margin = '0';
           newDocument.body.style.overflow = 'hidden';
-          newDocument.body.innerHTML = prompterNode.outerHTML;
+          const prompterClone = prompterNode.cloneNode(true) as HTMLElement;
+          prompterClone.id = 'prompter-mirror';
+          newDocument.body.appendChild(prompterClone);
 
           // Copy styles
           const stylesheets = Array.from(document.styleSheets);
@@ -149,7 +151,7 @@ export default function PrompterPanel() {
             }
           });
           
-          const prompterMirror = newDocument.getElementById(prompterNode.id);
+          const prompterMirror = newDocument.getElementById('prompter-mirror');
           if (prompterMirror) {
             prompterMirror.style.width = '100vw';
             prompterMirror.style.height = '100vh';
@@ -174,7 +176,7 @@ export default function PrompterPanel() {
     if (isAssistModeOn && assistWindowRef.current && !assistWindowRef.current.closed) {
       const prompterNode = prompterRef.current;
       if (prompterNode) {
-        const prompterMirror = assistWindowRef.current.document.getElementById(prompterNode.id);
+        const prompterMirror = assistWindowRef.current.document.getElementById('prompter-mirror');
         if (prompterMirror) {
             prompterMirror.innerHTML = prompterNode.innerHTML;
             prompterMirror.className = prompterNode.className;
@@ -185,7 +187,7 @@ export default function PrompterPanel() {
         }
       }
     }
-  }, [script, fontSize, horizontalMargin, verticalMargin, isPlaying, scrollSpeed, activeLine, isPrompterDarkMode, prompterTextBrightness, isFlippedVertical, isFlippedHorizontal, isPrompterFullscreen]);
+  }, [script, fontSize, horizontalMargin, verticalMargin, isPlaying, scrollSpeed, activeLine, isPrompterDarkMode, prompterTextBrightness, isFlippedVertical, isFlippedHorizontal, isPrompterFullscreen, isAssistModeOn]);
 
 
   const iconButtonClassName = cn(
@@ -224,22 +226,25 @@ export default function PrompterPanel() {
             <div
               className={cn(isFlippedHorizontal && 'transform-gpu scale-x-[-1]')}
             >
-            <Textarea
-              value={script}
-              onChange={(e) => setScript(e.target.value)}
-              className={cn(
-                'w-full resize-none border-0 bg-transparent text-center focus-visible:ring-0 focus-visible:ring-offset-0',
-                isPrompterDarkMode ? 'text-white/70 placeholder:text-white/40' : 'text-primary placeholder:text-primary/40'
-              )}
-              style={{
-                fontSize: `${fontSize}px`,
-                lineHeight: 1.5,
-                color: activeLine !== null ? 'hsl(var(--accent))' : undefined,
-                filter: isPrompterDarkMode ? `brightness(${prompterTextBrightness}%)` : 'none',
-                minHeight: '100%',
-              }}
-              placeholder="Your script will appear here..."
-            />
+              {scriptLines.map((line, index) => (
+                <p
+                  key={index}
+                  ref={(el) => (lineRefs.current[index] = el)}
+                  className={cn(
+                    'w-full break-words',
+                    isPrompterDarkMode ? 'text-white/70' : 'text-primary',
+                    index === activeLine - 1 && 'text-accent'
+                  )}
+                  style={{
+                    fontSize: `${fontSize}px`,
+                    lineHeight: 1.5,
+                    filter: isPrompterDarkMode ? `brightness(${prompterTextBrightness}%)` : 'none',
+                    minHeight: '1em',
+                  }}
+                >
+                  {line || ' '}
+                </p>
+              ))}
             </div>
         </div>
       </div>
