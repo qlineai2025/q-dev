@@ -108,12 +108,12 @@ export default function ControlsPanel() {
             <Button
               onClick={() => setIsPlaying(!isPlaying)}
               variant="ghost"
-              className="h-16 flex-1 justify-center rounded-r-none border-r text-lg"
+              className="flex-1 justify-center rounded-r-none border-r"
             >
               {isPlaying ? (
-                <Pause className="mr-2 h-6 w-6" />
+                <Pause className="mr-2 h-4 w-4" />
               ) : (
-                <Play className="mr-2 h-6 w-6" />
+                <Play className="mr-2 h-4 w-4" />
               )}
               {isPlaying ? 'Pause' : 'Play'}
             </Button>
@@ -121,14 +121,14 @@ export default function ControlsPanel() {
               tooltip={isListening ? 'Stop Listening' : 'Use Voice Commands'}
               onClick={handleListenToggle}
               className={cn(
-                'h-16 w-16 rounded-l-none',
-                 isListening ? 'bg-destructive/80 text-destructive-foreground hover:bg-destructive' : 'bg-secondary hover:bg-accent/50'
+                'rounded-l-none',
+                 isListening ? 'bg-destructive/80 text-destructive-foreground hover:bg-destructive' : ''
               )}
             >
               {isListening ? (
-                <MicOff className="h-8 w-8" />
+                <MicOff className="h-5 w-5" />
               ) : (
-                <Mic className="h-8 w-8" />
+                <Mic className="h-5 w-5" />
               )}
             </IconButton>
         </div>
