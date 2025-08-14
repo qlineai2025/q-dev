@@ -119,7 +119,8 @@ export default function PrompterPanel() {
     if (isAssistModeOn) {
       const prompterNode = prompterRef.current;
       if (prompterNode) {
-        const newWindow = window.open('', '_blank', 'width=800,height=600,scrollbars=no,toolbar=no,location=no');
+        // Open a new, clean tab. Most browsers will open a new tab if the 3rd argument is omitted or minimal.
+        const newWindow = window.open('', '_blank');
         if (newWindow) {
           assistWindowRef.current = newWindow;
           const newDocument = newWindow.document;
