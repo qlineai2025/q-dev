@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from 'react';
-import { Maximize, Minimize, Contrast, FlipVertical, FlipHorizontal } from 'lucide-react';
+import { Maximize, Minimize, Contrast, FlipVertical, FlipHorizontal, Rewind } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { cn } from '@/lib/utils';
 import IconButton from './icon-button';
@@ -12,6 +12,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Slider } from '../ui/slider';
+import { useToast } from '@/hooks/use-toast';
 
 export default function PrompterPanel() {
   const { 
@@ -23,6 +24,7 @@ export default function PrompterPanel() {
     setIsPlaying, 
     scrollSpeed, 
     activeLine,
+    setActiveLine,
     isPrompterDarkMode,
     setIsPrompterDarkMode,
     isPrompterFullscreen,
@@ -38,6 +40,7 @@ export default function PrompterPanel() {
   const lineRefs = useRef<(HTMLParagraphElement | null)[]>([]);
   const longPressTimer = useRef<NodeJS.Timeout>();
   const [isBrightnessPopoverOpen, setIsBrightnessPopoverOpen] = useState(false);
+  const { toast } = useToast();
   
   const scriptLines = script.split('\n');
 
@@ -92,6 +95,14 @@ export default function PrompterPanel() {
     }
   };
 
+  const handleRewind = () => {
+    setActiveLine(1);
+    toast({
+      title: "Rewind",
+      description: "Returned to the beginning of the script.",
+    });
+  };
+
 
   return (
     <main 
@@ -104,18 +115,21 @@ export default function PrompterPanel() {
       <div
         ref={prompterRef}
         className={cn(
-          "h-full cursor-pointer overflow-y-scroll rounded-md border scroll-smooth",
+          "h-full cursor-pointer overflow-y-scroll rounded-md border scroll-smooth text-center",
           isPrompterDarkMode ? 'bg-black' : 'bg-background',
-          isFlippedVertical && 'transform-gpu scale-y-[-1]'
         )}
         style={{
           paddingLeft: `${horizontalMargin}%`,
           paddingRight: `${horizontalMargin}%`,
           paddingTop: `${verticalMargin}vh`,
+          paddingBottom: `${verticalMargin}vh`,
           filter: !isPrompterDarkMode ? `brightness(${prompterTextBrightness}%)` : 'none',
         }}
       >
-        <div className="flex min-h-full flex-col">
+        <div className={cn(
+          "flex min-h-full flex-col",
+           isFlippedVertical && 'transform-gpu scale-y-[-1]'
+        )}>
             <div
               className={cn(isFlippedHorizontal && 'transform-gpu scale-x-[-1]')}
             >
@@ -124,9 +138,8 @@ export default function PrompterPanel() {
                 key={index}
                 ref={(el) => (lineRefs.current[index] = el)}
                 className={cn(
-                    'transition-colors duration-300 text-center',
+                    'transition-colors duration-300',
                      isPrompterDarkMode ? 'text-white' : 'text-primary',
-                     isFlippedVertical && 'transform-gpu scale-y-[-1]'
                 )}
                 style={{
                     fontSize: `${fontSize}px`,
@@ -152,7 +165,7 @@ export default function PrompterPanel() {
                 e.preventDefault();
                 e.stopPropagation();
               }}
-              className="contents" // Use contents to avoid adding an extra element to the DOM
+              className="contents"
             >
               <IconButton
                 tooltip="Click: Toggle Dark Mode, Long-press: Brightness"
@@ -183,6 +196,16 @@ export default function PrompterPanel() {
             </div>
           </PopoverContent>
         </Popover>
+        <IconButton
+          tooltip="Rewind to Top"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleRewind();
+          }}
+          className={cn(isPrompterDarkMode && 'text-white hover:text-white bg-transparent hover:bg-white/10')}
+        >
+          <Rewind className="h-5 w-5" />
+        </IconButton>
         <IconButton
           tooltip="Flip Horizontal"
           onClick={(e) => {

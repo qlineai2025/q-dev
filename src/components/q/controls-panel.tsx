@@ -12,7 +12,6 @@ import {
   MoveVertical,
   Timer,
   FileUp,
-  Rewind,
 } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { Slider } from '@/components/ui/slider';
@@ -44,7 +43,6 @@ export default function ControlsPanel() {
     isListening,
     setIsListening,
     setScript,
-    setActiveLine,
   } = useApp();
 
   const { toast } = useToast();
@@ -91,14 +89,6 @@ export default function ControlsPanel() {
     }
   };
 
-  const handleRewind = () => {
-    setActiveLine(1);
-    toast({
-      title: "Rewind",
-      description: "Returned to the beginning of the script.",
-    });
-  };
-
   return (
     <aside className="w-full border-border bg-background p-4 shadow-lg lg:h-full lg:w-[200px] lg:border-r">
       <div className="flex h-full flex-col">
@@ -122,17 +112,10 @@ export default function ControlsPanel() {
         </div>
 
         <div className="my-2 flex items-center justify-center rounded-md border">
-            <IconButton
-              tooltip="Rewind to Top"
-              onClick={handleRewind}
-              className="rounded-r-none border-r"
-            >
-              <Rewind className="h-5 w-5" />
-            </IconButton>
             <Button
               onClick={() => setIsPlaying(!isPlaying)}
               variant="ghost"
-              className="flex-1 justify-start rounded-none border-r"
+              className="flex-1 justify-start rounded-r-none border-r"
             >
               {isPlaying ? (
                 <Pause className="mr-2 h-4 w-4" />
