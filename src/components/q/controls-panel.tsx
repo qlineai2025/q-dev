@@ -62,7 +62,7 @@ export default function ControlsPanel() {
 
 
   return (
-    <aside className="w-full border-border bg-card p-4 shadow-lg lg:h-full lg:w-[320px] lg:border-l">
+    <aside className="w-full border-border bg-card p-4 shadow-lg lg:h-full lg:w-[320px] lg:border-r">
       <div className="flex h-full flex-col">
         <div className="flex items-center justify-between p-2">
             <h2 className="text-lg font-semibold">Controls</h2>

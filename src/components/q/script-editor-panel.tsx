@@ -65,7 +65,7 @@ export default function ScriptEditorPanel() {
   };
 
   return (
-    <aside className="flex w-full flex-col border-border bg-card p-4 shadow-lg lg:h-full lg:w-[400px] lg:border-r">
+    <aside className="flex h-[40vh] w-full flex-col border-border bg-card p-4 shadow-lg lg:h-auto lg:border-t">
       <div className="flex items-center justify-between p-2">
         <Logo />
       </div>

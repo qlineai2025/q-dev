@@ -7,10 +7,12 @@ import { Toaster } from '@/components/ui/toaster';
 export default function Home() {
   return (
     <AppProvider>
-      <div className="flex h-dvh w-full flex-col lg:flex-row bg-background font-body">
+      <div className="flex h-dvh w-full flex-col bg-background font-body">
+        <div className="flex flex-1 overflow-hidden">
+          <ControlsPanel />
+          <PrompterPanel />
+        </div>
         <ScriptEditorPanel />
-        <PrompterPanel />
-        <ControlsPanel />
       </div>
       <Toaster />
     </AppProvider>
