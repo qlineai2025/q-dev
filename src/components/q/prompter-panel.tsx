@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Maximize, Minimize, Contrast, FlipVertical, FlipHorizontal, Rewind } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { cn } from '@/lib/utils';
-import IconButton from '@/components/q/icon-button';
+import { IconButton } from '@/components/q/icon-button';
 import {
   Popover,
   PopoverContent,
@@ -72,7 +72,7 @@ export default function PrompterPanel() {
   
   const handlePanelClick = (e: React.MouseEvent<HTMLDivElement>) => {
     // Only toggle play/pause if the click is on the background, not on buttons or popovers
-    if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('[role="dialog"]') || (e.target as HTMLElement).closest('[role="tooltip"]')) {
+    if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('[data-radix-popper-content-wrapper]')) {
       return;
     }
     setIsPlaying(!isPlaying);
@@ -200,9 +200,7 @@ export default function PrompterPanel() {
             onOpenAutoFocus={(e) => e.preventDefault()}
             onClick={(e) => e.stopPropagation()}
              onInteractOutside={(e) => {
-              if ((e.target as HTMLElement).closest('[data-radix-popper-content-wrapper]')) {
-                e.preventDefault();
-              }
+              e.preventDefault();
             }}
           >
             <div className="h-32">

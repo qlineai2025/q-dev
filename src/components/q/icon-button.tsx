@@ -13,7 +13,7 @@ interface IconButtonProps extends ComponentProps<typeof Button> {
   children: ReactNode;
 }
 
-export default function IconButton({
+export function IconButton({
   tooltip,
   children,
   className,

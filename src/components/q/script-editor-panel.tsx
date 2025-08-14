@@ -6,7 +6,7 @@ import { useApp } from '@/hooks/use-app';
 import { Textarea } from '@/components/ui/textarea';
 import { intelligentScriptIndexing } from '@/ai/flows/intelligent-script-indexing';
 import { useToast } from '@/hooks/use-toast';
-import IconButton from '@/components/q/icon-button';
+import { IconButton } from '@/components/q/icon-button';
 
 export default function ScriptEditorPanel() {
   const { script, setScript, setIndexedScript, isLoadingIndex, setIsLoadingIndex, isScriptEditorExpanded, setIsScriptEditorExpanded } = useApp();

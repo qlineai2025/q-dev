@@ -6,7 +6,7 @@ import { signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth';
 
 import { useApp } from '@/hooks/use-app';
 import { auth, googleProvider } from '@/lib/firebase';
-import IconButton from '@/components/q/icon-button';
+import { IconButton } from '@/components/q/icon-button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,

@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { Slider } from '@/components/ui/slider';
-import IconButton from '@/components/q/icon-button';
+import { IconButton } from '@/components/q/icon-button';
 import AuthButton from '@/components/q/auth-button';
 import { useVoiceControl } from '@/hooks/use-voice-control';
 import { useToast } from '@/hooks/use-toast';
@@ -303,3 +303,5 @@ function ControlSlider({ label, icon, value, orientation = "horizontal", ...prop
     </div>
   );
 }
+
+    
