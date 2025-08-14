@@ -78,7 +78,7 @@ export default function PrompterPanel() {
     setIsPlaying(!isPlaying);
   };
   
-  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+  const handlePointerDown = (e: React.PointerEvent) => {
     e.stopPropagation();
     longPressTimer.current = setTimeout(() => {
       setIsBrightnessPopoverOpen(true);
@@ -86,7 +86,7 @@ export default function PrompterPanel() {
     }, 500);
   };
   
-  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+  const handlePointerUp = (e: React.PointerEvent) => {
     e.stopPropagation();
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
@@ -162,29 +162,24 @@ export default function PrompterPanel() {
             e.stopPropagation();
             handleRewind();
           }}
-          className={cn(isPrompterDarkMode && 'text-white/70 hover:text-white bg-transparent hover:bg-white/10')}
+          className={cn(isPrompterDarkMode && 'text-white/70 hover:text-white bg-black/20 hover:bg-white/10')}
         >
           <Rewind className="h-5 w-5" />
         </IconButton>
         <Popover open={isBrightnessPopoverOpen} onOpenChange={setIsBrightnessPopoverOpen}>
           <PopoverTrigger asChild>
-            <div
+            <IconButton
+              tooltip="Click: Toggle Dark Mode, Long-press: Brightness"
+              className={cn(isPrompterDarkMode && 'text-white/70 hover:text-white bg-black/20 hover:bg-white/10')}
               onPointerDown={handlePointerDown}
               onPointerUp={handlePointerUp}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
               }}
-              className="contents"
             >
-              <IconButton
-                tooltip="Click: Toggle Dark Mode, Long-press: Brightness"
-                className={cn(isPrompterDarkMode && 'text-white/70 hover:text-white bg-transparent hover:bg-white/10')}
-                onClick={() => {}} 
-              >
-                <Contrast className="h-5 w-5" />
-              </IconButton>
-            </div>
+              <Contrast className="h-5 w-5" />
+            </IconButton>
           </PopoverTrigger>
           <PopoverContent 
             side="top" 
@@ -212,7 +207,7 @@ export default function PrompterPanel() {
             e.stopPropagation();
             setIsFlippedHorizontal(!isFlippedHorizontal);
           }}
-          className={cn(isPrompterDarkMode && 'text-white/70 hover:text-white bg-transparent hover:bg-white/10')}
+          className={cn(isPrompterDarkMode && 'text-white/70 hover:text-white bg-black/20 hover:bg-white/10')}
         >
           <FlipHorizontal className="h-5 w-5" />
         </IconButton>
@@ -222,7 +217,7 @@ export default function PrompterPanel() {
             e.stopPropagation();
             setIsFlippedVertical(!isFlippedVertical);
           }}
-          className={cn(isPrompterDarkMode && 'text-white/70 hover:text-white bg-transparent hover:bg-white/10')}
+          className={cn(isPrompterDarkMode && 'text-white/70 hover:text-white bg-black/20 hover:bg-white/10')}
         >
           <FlipVertical className="h-5 w-5" />
         </IconButton>
@@ -232,7 +227,7 @@ export default function PrompterPanel() {
             e.stopPropagation();
             setIsPrompterFullscreen(!isPrompterFullscreen)}
           }
-           className={cn(isPrompterDarkMode && 'text-white/70 hover:text-white bg-transparent hover:bg-white/10')}
+           className={cn(isPrompterDarkMode && 'text-white/70 hover:text-white bg-black/20 hover:bg-white/10')}
         >
           {isPrompterFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
         </IconButton>
