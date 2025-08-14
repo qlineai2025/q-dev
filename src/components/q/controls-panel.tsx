@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { Slider } from '@/components/ui/slider';
-import { Label } from '@/components/ui/label';
 import IconButton from '@/components/q/icon-button';
 import AuthButton from '@/components/q/auth-button';
 import { useVoiceControl } from '@/hooks/use-voice-control';
@@ -89,7 +88,7 @@ export default function ControlsPanel() {
 
 
   return (
-    <aside className="w-full border-border bg-card p-4 shadow-lg lg:h-full lg:w-[320px] lg:border-r">
+    <aside className="w-full border-border bg-background p-4 shadow-lg lg:h-full lg:w-[320px] lg:border-r">
       <div className="flex h-full flex-col">
         <div className="flex w-full items-center rounded-md border">
           <input
@@ -110,7 +109,7 @@ export default function ControlsPanel() {
           <AuthButton />
         </div>
 
-        <div className="my-4 flex items-center justify-center rounded-md border">
+        <div className="my-2 flex items-center justify-center rounded-md border">
             <Button
               onClick={() => setIsPlaying(!isPlaying)}
               variant="ghost"
@@ -186,14 +185,13 @@ interface ControlSliderProps {
 function ControlSlider({ label, icon, value, ...props }: ControlSliderProps) {
   return (
     <div className="grid gap-3">
-      <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-        {icon}
-        <Label>{label}</Label>
-      </div>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Slider defaultValue={[value]} value={[value]} {...props} />
+            <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+              {icon}
+              <Slider defaultValue={[value]} value={[value]} {...props} />
+            </div>
           </TooltipTrigger>
           <TooltipContent>
             <p>{value}</p>
