@@ -66,7 +66,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     useState<IntelligentScriptIndexingOutput | null>(null);
   const [isLoadingIndex, setIsLoadingIndex] = useState<boolean>(false);
   const [activeLine, setActiveLine] = useState<number | null>(null);
-  const [isScriptEditorExpanded, setIsScriptEditorExpanded] = useState<boolean>(true);
+  const [isScriptEditorExpanded, setIsScriptEditorExpanded] = useState<boolean>(false);
   const [isPrompterDarkMode, setIsPrompterDarkMode] = useState<boolean>(false);
   const [isPrompterFullscreen, setIsPrompterFullscreen] = useState<boolean>(false);
 
