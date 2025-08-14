@@ -3,6 +3,7 @@
 
 import type { ComponentProps } from 'react';
 import { useEffect, useRef, useState } from 'react';
+import * as ReactDOM from 'react-dom';
 import { Maximize, Minimize, Contrast, FlipVertical, FlipHorizontal, Rewind, ScreenShare } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { cn } from '@/lib/utils';
@@ -14,13 +15,12 @@ import {
 import { Slider } from '../ui/slider';
 import { useToast } from '@/hooks/use-toast';
 import { IconButton } from '../ui/button';
-import { Textarea } from '../ui/textarea';
+import { AssistWindow } from './assist-window';
 
 
 export default function PrompterPanel() {
   const { 
     script, 
-    setScript,
     fontSize, 
     horizontalMargin, 
     verticalMargin,
@@ -47,8 +47,7 @@ export default function PrompterPanel() {
   const longPressTimer = useRef<NodeJS.Timeout>();
   const [isBrightnessPopoverOpen, setIsBrightnessPopoverOpen] = useState(false);
   const { toast } = useToast();
-  const assistWindowRef = useRef<Window | null>(null);
-
+  
   const scriptLines = script.split('\n');
 
   useEffect(() => {
@@ -114,97 +113,8 @@ export default function PrompterPanel() {
   const handleAssistModeToggle = () => {
     setIsAssistModeOn(!isAssistModeOn);
   };
-
-  useEffect(() => {
-    if (isAssistModeOn) {
-      const prompterNode = prompterRef.current;
-      if (prompterNode) {
-        // Open a new, clean tab. Most browsers will open a new tab if the 3rd argument is omitted or minimal.
-        const newWindow = window.open('', '_blank');
-        if (newWindow) {
-          assistWindowRef.current = newWindow;
-          const newDocument = newWindow.document;
-          newDocument.title = "Q_ Assist Mode";
-          newDocument.body.style.margin = '0';
-          newDocument.body.style.overflow = 'hidden';
-          const prompterClone = prompterNode.cloneNode(true) as HTMLElement;
-          prompterClone.id = 'prompter-mirror';
-          newDocument.body.appendChild(prompterClone);
-
-          // Copy styles
-          const stylesheets = Array.from(document.styleSheets);
-          stylesheets.forEach(stylesheet => {
-            if (stylesheet.href) {
-              const link = newDocument.createElement('link');
-              link.rel = 'stylesheet';
-              link.href = stylesheet.href;
-              newDocument.head.appendChild(link);
-            } else if (stylesheet.cssRules) {
-                try {
-                  const style = newDocument.createElement('style');
-                  Array.from(stylesheet.cssRules).forEach(rule => {
-                    style.appendChild(newDocument.createTextNode(rule.cssText));
-                  });
-                  newDocument.head.appendChild(style);
-                } catch (e) {
-                    console.warn('Could not copy some CSS rules:', e);
-                }
-            }
-          });
-          
-          const prompterMirror = newDocument.getElementById('prompter-mirror');
-          if (prompterMirror) {
-            prompterMirror.style.width = '100vw';
-            prompterMirror.style.height = '100vh';
-          }
-        }
-      }
-    } else {
-      if (assistWindowRef.current && !assistWindowRef.current.closed) {
-        assistWindowRef.current.close();
-        assistWindowRef.current = null;
-      }
-    }
-
-    return () => {
-        if (assistWindowRef.current && !assistWindowRef.current.closed) {
-            assistWindowRef.current.close();
-        }
-    }
-  }, [isAssistModeOn]);
-
-  useEffect(() => {
-    if (isAssistModeOn && assistWindowRef.current && !assistWindowRef.current.closed) {
-      const prompterNode = prompterRef.current;
-      if (prompterNode) {
-        const prompterMirror = assistWindowRef.current.document.getElementById('prompter-mirror');
-        if (prompterMirror) {
-            prompterMirror.innerHTML = prompterNode.innerHTML;
-            prompterMirror.className = prompterNode.className;
-            prompterMirror.style.cssText = prompterNode.style.cssText;
-            prompterMirror.scrollTop = prompterNode.scrollTop;
-            assistWindowRef.current.document.body.style.backgroundColor = isPrompterDarkMode ? 'black' : 'hsl(var(--background))';
-
-        }
-      }
-    }
-  }, [script, fontSize, horizontalMargin, verticalMargin, isPlaying, scrollSpeed, activeLine, isPrompterDarkMode, prompterTextBrightness, isFlippedVertical, isFlippedHorizontal, isPrompterFullscreen, isAssistModeOn]);
-
-
-  const iconButtonClassName = cn(
-    'text-primary/70 hover:text-primary',
-    isPrompterDarkMode ? 'text-white/70 hover:text-white' : 'text-primary/70 hover:text-primary'
-  );
-
-
-  return (
-    <main 
-      className={cn(
-        "relative flex-1 p-4 bg-background",
-        isPrompterFullscreen && 'h-dvh w-dvw p-8'
-      )}
-      onClick={handlePanelClick}
-    >
+  
+  const prompterContent = (
       <div
         id="prompter-main-view"
         ref={prompterRef}
@@ -249,6 +159,29 @@ export default function PrompterPanel() {
             </div>
         </div>
       </div>
+  )
+
+  const iconButtonClassName = cn(
+    'text-primary/70 hover:text-primary',
+    isPrompterDarkMode ? 'text-white/70 hover:text-white' : 'text-primary/70 hover:text-primary'
+  );
+
+  return (
+    <main 
+      className={cn(
+        "relative flex-1 p-4 bg-background",
+        isPrompterFullscreen && 'h-dvh w-dvw p-8'
+      )}
+      onClick={handlePanelClick}
+    >
+      {prompterContent}
+       {isAssistModeOn && (
+        <AssistWindow onClose={() => setIsAssistModeOn(false)}>
+          <div className="h-dvh w-dvw">
+            {prompterContent}
+          </div>
+        </AssistWindow>
+      )}
       <div className="absolute bottom-4 right-4 flex flex-col gap-2">
         <IconButton
           tooltip="Rewind to Top"
