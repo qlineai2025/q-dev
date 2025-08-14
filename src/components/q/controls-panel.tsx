@@ -13,14 +13,14 @@ import {
   MoveVertical,
   Timer,
   FileUp,
-  Waveform,
+  Settings2,
 } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { Slider } from '@/components/ui/slider';
 import AuthButton from '@/components/q/auth-button';
 import { useVoiceControl } from '@/hooks/use-voice-control';
 import { useToast } from '@/hooks/use-toast';
-import { Button } from '../ui/button';
+import { Button, IconButton } from '../ui/button';
 import { cn } from '@/lib/utils';
 import {
   Tooltip,
@@ -41,39 +41,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
-
-interface IconButtonProps extends ComponentProps<typeof Button> {
-  tooltip: string;
-  children: ReactNode;
-}
-
-function IconButton({
-  tooltip,
-  children,
-  className,
-  ...props
-}: IconButtonProps) {
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className={cn('h-9 w-9 text-muted-foreground hover:text-foreground', className)}
-            {...props}
-          >
-            {children}
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>{tooltip}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-}
-
 
 export default function ControlsPanel() {
   const {
@@ -212,7 +179,7 @@ export default function ControlsPanel() {
                         className="rounded-l-none bg-primary/90 hover:bg-primary/80"
                         onClick={handleAudioSettingsClick}
                     >
-                        <Waveform className="h-5 w-5" />
+                        <Settings2 className="h-5 w-5" />
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-64" align="start">
@@ -309,12 +276,12 @@ function ControlSlider({ label, icon, value, orientation = "horizontal", ...prop
       "grid gap-3",
       orientation === 'vertical' ? 'flex-1 flex flex-col items-center justify-center h-full' : ''
     )}>
-      <TooltipProvider>
+       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
             <div className={cn(
               "flex items-center gap-2 text-sm font-medium text-muted-foreground",
-              orientation === 'vertical' ? 'flex-col-reverse h-full' : ''
+              orientation === 'vertical' ? 'flex-col-reverse justify-between h-full' : ''
             )}>
               <Slider 
                 defaultValue={[value]} 
@@ -325,7 +292,7 @@ function ControlSlider({ label, icon, value, orientation = "horizontal", ...prop
                 )}
                 {...props} 
               />
-              {icon}
+              <div className="flex items-center justify-center h-8 w-8">{icon}</div>
             </div>
           </TooltipTrigger>
           <TooltipContent side={orientation === 'vertical' ? 'right' : 'bottom'}>

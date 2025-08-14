@@ -8,7 +8,7 @@ import { signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth';
 
 import { useApp } from '@/hooks/use-app';
 import { auth, googleProvider } from '@/lib/firebase';
-import { Button } from '@/components/ui/button';
+import { Button, IconButton } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -24,39 +24,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
 
-interface IconButtonProps extends ComponentProps<typeof Button> {
-  tooltip: string;
-  children: ReactNode;
-}
-
-function IconButton({
-  tooltip,
-  children,
-  className,
-  ...props
-}: IconButtonProps) {
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className={cn('h-9 w-9 text-muted-foreground hover:text-foreground', className)}
-            {...props}
-          >
-            {children}
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>{tooltip}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-}
 
 export default function AuthButton() {
   const { user, setUser } = useApp();

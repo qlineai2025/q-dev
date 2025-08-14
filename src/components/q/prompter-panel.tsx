@@ -1,12 +1,11 @@
 
 "use client";
 
-import type { ComponentProps, ReactNode } from 'react';
+import type { ComponentProps } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { Maximize, Minimize, Contrast, FlipVertical, FlipHorizontal, Rewind } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 import {
   Popover,
   PopoverContent,
@@ -14,39 +13,8 @@ import {
 } from "@/components/ui/popover"
 import { Slider } from '../ui/slider';
 import { useToast } from '@/hooks/use-toast';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import { IconButton } from '../ui/button';
 
-interface IconButtonProps extends ComponentProps<typeof Button> {
-  tooltip: string;
-  children: ReactNode;
-}
-
-function IconButton({
-  tooltip,
-  children,
-  className,
-  ...props
-}: IconButtonProps) {
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className={cn('h-9 w-9 text-muted-foreground hover:text-foreground', className)}
-            {...props}
-          >
-            {children}
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>{tooltip}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-}
 
 export default function PrompterPanel() {
   const { 
@@ -234,8 +202,9 @@ export default function PrompterPanel() {
             onOpenAutoFocus={(e) => e.preventDefault()}
             onClick={(e) => e.stopPropagation()}
              onInteractOutside={(e) => {
-              // This was preventing dismissal, re-enabling default behavior
-              // e.preventDefault(); 
+              if (e.target !== prompterRef.current) {
+                e.preventDefault();
+              }
             }}
           >
             <div className="h-32">
