@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Maximize, Minimize, Contrast } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { cn } from '@/lib/utils';
@@ -34,6 +34,9 @@ export default function PrompterPanel() {
   } = useApp();
   const prompterRef = useRef<HTMLDivElement>(null);
   const lineRefs = useRef<(HTMLParagraphElement | null)[]>([]);
+  const longPressTimer = useRef<NodeJS.Timeout>();
+  const [isBrightnessPopoverOpen, setIsBrightnessPopoverOpen] = useState(false);
+
 
   const scriptLines = script.split('\n');
 
@@ -69,6 +72,31 @@ export default function PrompterPanel() {
       return;
     }
     setIsPlaying(!isPlaying);
+  };
+  
+  const handleContrastInteraction = (e: React.MouseEvent | React.TouchEvent) => {
+    // Prevent click from propagating to the panel
+    e.stopPropagation();
+  
+    // Clear any existing timer
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+    }
+  
+    if (e.type === 'mousedown' || e.type === 'touchstart') {
+      longPressTimer.current = setTimeout(() => {
+        setIsBrightnessPopoverOpen(true);
+      }, 500); // 500ms for a long press
+    } else if (e.type === 'click') {
+        // This is a simple click, toggle dark mode
+        setIsPrompterDarkMode(!isPrompterDarkMode);
+    }
+  };
+  
+  const handlePointerUp = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+    }
   };
 
 
@@ -119,11 +147,15 @@ export default function PrompterPanel() {
         </div>
       </div>
       <div className="absolute bottom-4 right-4 flex flex-col gap-2">
-      <Popover>
+      <Popover open={isBrightnessPopoverOpen} onOpenChange={setIsBrightnessPopoverOpen}>
           <PopoverTrigger asChild>
             <IconButton
-              tooltip={isPrompterDarkMode ? "Light Mode" : "Dark Mode"}
-              onClick={(e) => e.stopPropagation()}
+              tooltip="Click: Toggle Dark Mode, Long-press: Brightness"
+              onClick={handleContrastInteraction}
+              onMouseDown={handleContrastInteraction}
+              onMouseUp={handlePointerUp}
+              onTouchStart={handleContrastInteraction}
+              onTouchEnd={handlePointerUp}
               className={cn(isPrompterDarkMode && 'text-white hover:text-white')}
             >
               <Contrast className="h-5 w-5" />
