@@ -34,9 +34,7 @@ export default function PrompterPanel() {
   const lineRefs = useRef<(HTMLParagraphElement | null)[]>([]);
   const longPressTimer = useRef<NodeJS.Timeout>();
   const [isBrightnessPopoverOpen, setIsBrightnessPopoverOpen] = useState(false);
-  const isLongPress = useRef(false);
-
-
+  
   const scriptLines = script.split('\n');
 
   useEffect(() => {
@@ -72,22 +70,12 @@ export default function PrompterPanel() {
     }
     setIsPlaying(!isPlaying);
   };
-  
-  const handleContrastInteraction = (e: React.MouseEvent | React.TouchEvent) => {
-    e.stopPropagation();
-    if (isLongPress.current) {
-        isLongPress.current = false;
-        return;
-    }
-    setIsPrompterDarkMode(!isPrompterDarkMode);
-  };
-  
+
   const handlePointerDown = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
-    isLongPress.current = false;
     longPressTimer.current = setTimeout(() => {
-      isLongPress.current = true;
       setIsBrightnessPopoverOpen(true);
+      longPressTimer.current = undefined; // Clear timer ref after it has run
     }, 500);
   };
 
@@ -95,7 +83,10 @@ export default function PrompterPanel() {
     e.stopPropagation();
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
+      // This was a short click, so we toggle the mode
+      setIsPrompterDarkMode(prev => !prev);
     }
+    // If the timer is already cleared, it means it was a long press, so we do nothing here
   };
 
 
@@ -151,11 +142,11 @@ export default function PrompterPanel() {
           <PopoverTrigger asChild>
             <IconButton
               tooltip="Click: Toggle Dark Mode, Long-press: Brightness"
-              onClick={handleContrastInteraction}
               onMouseDown={handlePointerDown}
               onMouseUp={handlePointerUp}
               onTouchStart={handlePointerDown}
               onTouchEnd={handlePointerUp}
+              onClick={(e) => e.preventDefault()} // Prevent default click behavior
               className={cn(isPrompterDarkMode && 'text-white hover:text-white bg-transparent hover:bg-white/10')}
             >
               <Contrast className="h-5 w-5" />
