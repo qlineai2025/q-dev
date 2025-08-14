@@ -12,7 +12,7 @@ import {
   MoveVertical,
   Timer,
   FileUp,
-  Settings,
+  Waveform,
 } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { Slider } from '@/components/ui/slider';
@@ -150,40 +150,36 @@ export default function ControlsPanel() {
 
         <div className="my-2 flex items-center justify-center">
             <Button
-              onClick={() => setIsPlaying(!isPlaying)}
-              variant="secondary"
-              className="flex-1 justify-start rounded-r-none"
+                variant={isListening ? "destructive" : "default"}
+                onClick={handleListenToggle}
+                className="rounded-r-none bg-primary/90 hover:bg-primary/80"
             >
-              {isPlaying ? (
-                <Pause className="mr-2 h-4 w-4" />
-              ) : (
-                <Play className="mr-2 h-4 w-4" />
-              )}
-              {isPlaying ? 'Pause' : 'Play'}
+                {isListening ? (
+                    <MicOff className="h-5 w-5" />
+                ) : (
+                    <Mic className="h-5 w-5" />
+                )}
             </Button>
             <Button
-              variant="secondary"
-              onClick={handleListenToggle}
-              className={cn(
-                 isListening ? 'bg-destructive/80 text-destructive-foreground hover:bg-destructive' : '',
-                 'rounded-none'
-              )}
+              onClick={() => setIsPlaying(!isPlaying)}
+              variant="default"
+              className="flex-1 justify-center rounded-none bg-primary/90 hover:bg-primary/80"
             >
-              {isListening ? (
-                <MicOff className="h-5 w-5" />
+              {isPlaying ? (
+                <Pause className="h-5 w-5" />
               ) : (
-                <Mic className="h-5 w-5" />
+                <Play className="h-5 w-5" />
               )}
             </Button>
              <Popover open={isAudioSettingsOpen} onOpenChange={setIsAudioSettingsOpen}>
                 <PopoverTrigger asChild>
                     <Button 
-                        variant="secondary" 
+                        variant="default" 
                         size="icon" 
-                        className="rounded-l-none"
+                        className="rounded-l-none bg-primary/90 hover:bg-primary/80"
                         onClick={handleAudioSettingsClick}
                     >
-                        <Settings className="h-5 w-5" />
+                        <Waveform className="h-5 w-5" />
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-64" align="start">

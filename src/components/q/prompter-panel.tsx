@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Maximize, Minimize, Contrast, FlipVertical, FlipHorizontal, Rewind } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { cn } from '@/lib/utils';
-import IconButton from './icon-button';
+import IconButton from '@/components/q/icon-button';
 import {
   Popover,
   PopoverContent,
@@ -72,7 +72,7 @@ export default function PrompterPanel() {
   
   const handlePanelClick = (e: React.MouseEvent<HTMLDivElement>) => {
     // Only toggle play/pause if the click is on the background, not on buttons or popovers
-    if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('[role="dialog"]')) {
+    if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('[role="dialog"]') || (e.target as HTMLElement).closest('[role="tooltip"]')) {
       return;
     }
     setIsPlaying(!isPlaying);
@@ -103,6 +103,11 @@ export default function PrompterPanel() {
       description: "Returned to the beginning of the script.",
     });
   };
+
+  const iconButtonClassName = cn(
+    'text-primary/70 hover:text-primary',
+    isPrompterDarkMode && 'text-white/70 hover:text-white'
+  );
 
 
   return (
@@ -163,7 +168,7 @@ export default function PrompterPanel() {
             e.stopPropagation();
             handleRewind();
           }}
-          className={cn('text-white/70 hover:text-white ')}
+          className={iconButtonClassName}
         >
           <Rewind className="h-5 w-5" />
         </IconButton>
@@ -178,10 +183,11 @@ export default function PrompterPanel() {
               }}
               role="button"
               aria-label="Brightness and color mode control"
+              className="contents"
             >
               <IconButton
                 tooltip="Click: Toggle Dark Mode, Long-press: Brightness"
-                className={cn('text-white/70 hover:text-white ')}
+                className={iconButtonClassName}
               >
                 <Contrast className="h-5 w-5" />
               </IconButton>
@@ -193,10 +199,10 @@ export default function PrompterPanel() {
             className="w-auto border-none bg-transparent shadow-none p-4"
             onOpenAutoFocus={(e) => e.preventDefault()}
             onClick={(e) => e.stopPropagation()}
-            onInteractOutside={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setIsBrightnessPopoverOpen(false);
+             onInteractOutside={(e) => {
+              if ((e.target as HTMLElement).closest('[data-radix-popper-content-wrapper]')) {
+                e.preventDefault();
+              }
             }}
           >
             <div className="h-32">
@@ -218,7 +224,7 @@ export default function PrompterPanel() {
             e.stopPropagation();
             setIsFlippedHorizontal(!isFlippedHorizontal);
           }}
-          className={cn('text-white/70 hover:text-white ')}
+          className={iconButtonClassName}
         >
           <FlipHorizontal className="h-5 w-5" />
         </IconButton>
@@ -228,7 +234,7 @@ export default function PrompterPanel() {
             e.stopPropagation();
             setIsFlippedVertical(!isFlippedVertical);
           }}
-          className={cn('text-white/70 hover:text-white ')}
+          className={iconButtonClassName}
         >
           <FlipVertical className="h-5 w-5" />
         </IconButton>
@@ -238,7 +244,7 @@ export default function PrompterPanel() {
             e.stopPropagation();
             setIsPrompterFullscreen(!isPrompterFullscreen)}
           }
-           className={cn('text-white/70 hover:text-white ')}
+           className={iconButtonClassName}
         >
           {isPrompterFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
         </IconButton>
