@@ -8,13 +8,15 @@ export default function Home() {
   return (
     <AppProvider>
       <div className="flex h-dvh w-full flex-col bg-background font-body">
-        <div className="flex flex-1 overflow-hidden">
-          <div className="flex w-full flex-col lg:flex-row">
+        <div className="flex-1 overflow-hidden">
+          <div className="flex h-full w-full flex-col lg:flex-row">
             <ControlsPanel />
             <PrompterPanel />
           </div>
         </div>
-        <ScriptEditorPanel />
+        <div className="h-[40vh]">
+          <ScriptEditorPanel />
+        </div>
       </div>
       <Toaster />
     </AppProvider>
