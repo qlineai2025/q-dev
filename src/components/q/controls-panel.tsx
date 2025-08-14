@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   Type,
   Play,
@@ -10,6 +10,7 @@ import {
   MicOff,
   MoveHorizontal,
   Timer,
+  FileUp
 } from 'lucide-react';
 import { useApp } from '@/hooks/use-app';
 import { Slider } from '@/components/ui/slider';
@@ -18,6 +19,7 @@ import IconButton from '@/components/q/icon-button';
 import AuthButton from '@/components/q/auth-button';
 import { useVoiceControl } from '@/hooks/use-voice-control';
 import { useToast } from '@/hooks/use-toast';
+import { Button } from '../ui/button';
 
 export default function ControlsPanel() {
   const {
@@ -31,10 +33,12 @@ export default function ControlsPanel() {
     setIsPlaying,
     isListening,
     setIsListening,
+    setScript,
   } = useApp();
 
   const { toast } = useToast();
   const { startListening, stopListening, error } = useVoiceControl();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (error) {
@@ -60,12 +64,27 @@ export default function ControlsPanel() {
     }
   };
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const text = e.target?.result as string;
+        setScript(text);
+        toast({
+          title: "File Imported",
+          description: "The script has been loaded into the editor.",
+        });
+      };
+      reader.readAsText(file);
+    }
+  };
+
 
   return (
     <aside className="w-full border-border bg-card p-4 shadow-lg lg:h-full lg:w-[320px] lg:border-r">
       <div className="flex h-full flex-col">
-        <div className="flex items-center justify-between p-2">
-            <h2 className="text-lg font-semibold">Controls</h2>
+        <div className="flex items-center justify-end p-2">
             <AuthButton />
         </div>
 
@@ -126,6 +145,23 @@ export default function ControlsPanel() {
             max={45}
             step={1}
           />
+           <div className="mt-auto pt-8">
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              className="hidden"
+              accept=".txt,.md"
+            />
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <FileUp className="mr-2 h-4 w-4" />
+              Import from File
+            </Button>
+          </div>
         </div>
       </div>
     </aside>

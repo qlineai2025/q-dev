@@ -9,8 +9,10 @@ export default function Home() {
     <AppProvider>
       <div className="flex h-dvh w-full flex-col bg-background font-body">
         <div className="flex flex-1 overflow-hidden">
-          <ControlsPanel />
-          <PrompterPanel />
+          <div className="flex w-full flex-col lg:flex-row">
+            <ControlsPanel />
+            <PrompterPanel />
+          </div>
         </div>
         <ScriptEditorPanel />
       </div>
