@@ -10,6 +10,10 @@ import * as z from "zod";
 import GoogleGenerativeAI from "@genkit-ai/googleai";
 import * as logger from "firebase-functions/logger";
 
+// Export the new indexScript function
+export { indexScript } from './index-script';
+
+
 // For cost control, you can set the maximum number of containers.
 setGlobalOptions({maxInstances: 10});
 
