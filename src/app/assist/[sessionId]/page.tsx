@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 import { AppProvider, AppContext } from '@/contexts/app-provider';
 
 
-function AssistPrompterView() {
+function AssistView() {
     const params = useParams();
     const sessionId = params.sessionId as string;
     const [state, setState] = useState<AppState | null>(null);
@@ -73,7 +73,7 @@ function AssistPrompterView() {
             )}>
                 <PrompterView />
             </div>
-        </DummyProvider>
+        </DummyyProvider>
     );
 }
 
@@ -81,9 +81,7 @@ function AssistPrompterView() {
 export default function AssistPage() {
     return (
         <AppProvider>
-            <AssistPrompterView />
+            <AssistView />
         </AppProvider>
     )
 }
-
-    
