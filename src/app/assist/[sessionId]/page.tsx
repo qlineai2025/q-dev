@@ -73,7 +73,7 @@ function AssistView() {
             )}>
                 <PrompterView />
             </div>
-        </DummyyProvider>
+        </DummyProvider>
     );
 }
 
