@@ -1,53 +1,32 @@
-import {
-  setGlobalOptions,
-} from "firebase-functions";
-import {defineSecret} from "firebase-functions/v2/params";
-import {
-  configureGenkit,
-  onCallGenkit,
-} from "@genkit-ai/firebase/functions";
-import * as z from "zod";
-import GoogleGenerativeAI from "@genkit-ai/googleai";
+/**
+ * Import function triggers from their respective submodules:
+ *
+ * import {onCall} from "firebase-functions/v2/https";
+ * import {onDocumentWritten} from "firebase-functions/v2/firestore";
+ *
+ * See a full list of supported triggers at https://firebase.google.com/docs/functions
+ */
+
+import {setGlobalOptions} from "firebase-functions";
+import {onRequest} from "firebase-functions/https";
 import * as logger from "firebase-functions/logger";
 
-// Export the new indexScript function
-export { indexScript } from './index-script';
+// Start writing functions
+// https://firebase.google.com/docs/functions/typescript
 
+// For cost control, you can set the maximum number of containers that can be
+// running at the same time. This helps mitigate the impact of unexpected
+// traffic spikes by instead downgrading performance. This limit is a
+// per-function limit. You can override the limit for each function using the
+// `maxInstances` option in the function's options, e.g.
+// `onRequest({ maxInstances: 5 }, (req, res) => { ... })`.
+// NOTE: setGlobalOptions does not apply to functions using the v1 API. V1
+// functions should each use functions.runWith({ maxInstances: 10 }) instead.
+// In the v1 API, each function can only serve one request per container, so
+// this will be the maximum concurrent request count.
+setGlobalOptions({ maxInstances: 10 });
 
-// For cost control, you can set the maximum number of containers.
-setGlobalOptions({maxInstances: 10});
-
-// 1. Define the secret. The name must match the one you set in the CLI.
-const genkitApiKey = defineSecret("GENKIT_API_KEY");
-
-// 2. Configure Genkit with the API key from the secret.
-// This block initializes Genkit and tells it to use
-// the GoogleGenerativeAI plugin.
-configureGenkit({
-  plugins: [
-    new GoogleGenerativeAI({
-      apiKey: genkitApiKey,
-    }),
-  ],
-});
-
-// A simple example Genkit flow to demonstrate the setup is working.
-const simpleFlow = configureGenkit.defineFlow(
-  {
-    name: "simpleFlow",
-    inputSchema: z.string(),
-    outputSchema: z.string(),
-  },
-  async (prompt: string) => {
-    logger.info(`Received prompt: ${prompt}`);
-    return `Flow received: "${prompt}"`;
-  }
-);
-
-// 3. Export the callable function with Genkit.
-export const genkitSimpleFlow = onCallGenkit(
-  {
-    secrets: [genkitApiKey],
-  },
-  simpleFlow
-);
+// export const helloWorld = onRequest((request, response) => {
+//   logger.info("Hello logs!", {structuredData: true});
+//   response.send("Hello from Firebase!");
+// });
